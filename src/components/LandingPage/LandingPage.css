@@ -1,0 +1,39 @@
+.landing-page {
+    text-align: center;
+    padding: 40px 15px;
+    background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url('../../assets/paper-background.jpg');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: calc(100vh - calc(3.5rem * 1.5));
+}
+  
+.landing-page .landing-title {
+    font-size: 64px;
+    font-weight: 700;
+    margin-top: 130px;
+    margin-bottom: 70px;
+}
+  
+.landing-page .landing-subtitle {
+    font-size: 24px;
+    width: 33%;
+    margin: 0 auto 50px;
+}
+  
+.landing-page .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+.credit {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    font-size: 0.6rem;
+}
+  
+/* Additional styles specific to LandingPage can go here */

@@ -1,24 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "simplebar-react/dist/simplebar.min.css";
+import "./App.css";
+import { KindeProvider } from "@kinde-oss/kinde-auth-react";
+import Routes from "./Routes";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <KindeProvider
+      clientId={process.env.REACT_APP_KINDE_CLIENT_ID}
+      domain={process.env.REACT_APP_KINDE_DOMAIN}
+      redirectUri={process.env.REACT_APP_KINDE_REDIRECT_URL}
+      logoutUri={process.env.REACT_APP_KINDE_LOGOUT_URL}
+      // onRedirectCallback={onRedirectCallback}
+    >
+      <Routes />
+    </KindeProvider>
   );
 }
 

@@ -1,0 +1,145 @@
+.chat-container {
+    margin-left: 1rem;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+  
+.messages-display {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-height: calc(100vh - 125px);
+    overflow-y: auto;
+    justify-content: flex-end;
+}
+  
+.message {
+    max-width: 60%;
+    margin: 5px;
+    padding: 15px 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    word-break: break-word;
+}
+
+.message-input-container {
+    border-top: 1px solid var(--dark-grey);
+    background-color: var(--white);
+    padding: 10px 20px;
+    position: sticky;
+    bottom: 0;
+}
+
+.message-input {
+    /* padding: 15px 20px !important; */
+    /* height: auto !important; */
+    min-height: 38px;
+    resize: none;
+    overflow-y: hidden;
+    font-size: 1.1rem;
+}
+
+.message-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+  
+.btn {
+    font-size: 1.6rem;
+    border: none;
+    color: var(--dark-grey);
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: auto;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #867ed2;
+    color: var(--white)
+    /* background-color: #DCF8C6; */
+}
+  
+.assistant-message {
+    align-self: flex-start;
+    /* background-color: #EFEDFA; */
+    background-color: #F0F0F0;
+    color: var(--primary-font-color);
+}
+
+.spinner-dimension {
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.loading-text {
+    font-size: 1.25rem;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+.desc-text {
+    font-size: 0.85rem;
+    color: var(--light-grey-text);
+}
+
+.error-icon {
+    font-size: 3rem;
+    color: var(--primary-red);
+}
+
+.error-text {
+    font-size: 1.15rem;
+    padding-top: 15px;
+}
+
+/* .typing-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: black;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+  }
+  
+  @keyframes typing {
+    0% { opacity: 0.1; }
+    50% { opacity: 1; }
+    100% { opacity: 0.1; }
+  } */
+
+  .typing-indicator {
+    display: inline-block;
+  }
+  
+  .typing-indicator div {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: black;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+  }
+  
+  .typing-indicator div:nth-child(1) {
+    animation-delay: 0s;
+  }
+  
+  .typing-indicator div:nth-child(2) {
+    animation-delay: 0.33s;
+  }
+  
+  .typing-indicator div:nth-child(3) {
+    animation-delay: 0.66s;
+  }
+  
+  @keyframes typing {
+    0% { opacity: 0.1; }
+    50% { opacity: 1; }
+    100% { opacity: 0.1; }
+  }
+  

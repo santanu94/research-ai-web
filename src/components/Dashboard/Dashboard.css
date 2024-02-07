@@ -1,0 +1,16 @@
+.dashboard-main-container {
+    width: 100%;
+    padding: 5rem;
+    position: relative;
+}
+
+.left-section {
+    max-width: 70%;
+}
+
+.greeter {
+    margin-left: 2rem;
+    margin-bottom: 4rem;
+    font-size: 32px;
+    font-weight: 700;
+}

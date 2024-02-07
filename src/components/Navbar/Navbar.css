@@ -1,0 +1,26 @@
+.navbar {
+    /* margin-bottom: 20px; */
+    height: calc(3.5rem * 1.5);
+    background-color: var(--white) !important;
+}
+
+.navbar .navbar-brand {
+    font-size: 14px;
+}
+
+.navbar .nav-link {
+    font-size: 14px;
+}
+
+.navbar .btn-get-started {
+    background-color: #6047ca;
+    color: white;
+    padding: 8px 15px !important;
+    border: none;
+    border-radius: 6px;
+    margin-left: 10px;
+}
+
+.navbar-toggler {
+    line-height: calc(3.5rem * 1.5);
+}

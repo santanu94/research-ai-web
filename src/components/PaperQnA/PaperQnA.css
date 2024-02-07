@@ -1,0 +1,33 @@
+/* PaperQnA.css */
+.paper-layout {
+    display: flex;
+    max-height: 100vh;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.back-to-dash {
+    padding: 10px 20px;
+}
+
+.back-button {
+    font-size: 1.8rem;
+}
+
+.back-to-dash .text {
+    font-size: 1.2rem;
+    margin-left: 10px;
+}
+
+.pdf-view {
+    flex: 0 0 55%; /* 65% of the container */
+    /* Additional styling for PDF viewer */
+}
+
+.chatroom {
+    flex-grow: 1;
+    max-height: calc(100% - 2rem);
+    /* flex: 0 0 45%; 35% of the container */
+    /* Additional styling for chat section */
+    /* height: 100vh; */
+}

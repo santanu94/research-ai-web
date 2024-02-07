@@ -1,0 +1,59 @@
+.user-control-panel {
+    background-color: var(--white);
+    min-height: 100vh;
+    width: 115px;
+    padding: 50px 0;
+}
+
+.icon-container {
+    border-radius: 4px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 80px;
+}
+
+.user-control-panel .icon {
+    font-size: 18px;
+    color: var(--primary-color);
+}
+
+.icon-container.active {
+    background-color: var(--primary-color);
+}
+
+.icon-container.active .icon {
+    color: var(--white)
+}
+
+.user-icon-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto; /* Push to the bottom of the flex container */
+    border-radius: 8px;
+    width: 45px;
+    height: 45px;
+    background-color: rgb(219, 219, 219);
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    padding: 0;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.logout {
+    background-color: var(--primary-red);
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: var(--almost-white);
+}
