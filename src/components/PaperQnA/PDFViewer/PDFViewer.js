@@ -15,11 +15,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SimpleBar from "simplebar-react";
 
-// pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   "pdfjs-dist/build/pdf.worker.min.js",
+//   import.meta.url
+// ).toString();
 
 const PDFViewer = ({ url }) => {
   const [numPages, setNumPages] = useState(null);
@@ -158,14 +158,14 @@ const PDFViewer = ({ url }) => {
         <button onClick={() => setScale(scale + 0.1)}>Zoom In</button>
         <button onClick={() => setScale(scale - 0.1)}>Zoom Out</button>
       </nav> */}
-      <div className="pdf-viewer">
+      <div className="pdf-viewer h-80vh">
         <SimpleBar autoHide={false} className="simplebar-maxheight">
           <div ref={ref}>
             <Document
               file={url}
               onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               loading={
-                <div class="d-flex h-100 justify-content-center align-items-center">
+                <div class="d-flex justify-content-center align-items-center">
                   <div className="spinner spinner-grow" role="status"></div>
                 </div>
               }
