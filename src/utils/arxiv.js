@@ -93,7 +93,7 @@
 // }
 
 export function arxiv_search({ all, author, title, abstrct, journal_ref }) {
-  let baseUrl = "http://export.arxiv.org/api/query?search_query=";
+  let baseUrl = "https://export.arxiv.org/api/query?search_query=";
   let queryParts = [];
 
   if (author) {
