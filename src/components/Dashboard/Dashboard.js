@@ -30,7 +30,21 @@ const Dashboard = () => {
   const greeting = getGreetingBasedOnTime();
 
   if (isLoading) {
-    return <div>Loading Profile, Please wait...</div>;
+    return (
+      <div className="d-flex align-items-center flex-column vh-100 loading-screen">
+        <div
+          className="spinner spinner-grow spinner-dimension"
+          role="status"
+        ></div>
+        <div className="loading-text-headline">
+          Loading Profile, please wait...
+        </div>
+        <div>
+          (If you do not get automatically redirected, please Refresh the page
+          and try again)
+        </div>
+      </div>
+    );
   }
 
   return (

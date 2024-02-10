@@ -158,7 +158,7 @@ const PDFViewer = ({ url }) => {
         <button onClick={() => setScale(scale + 0.1)}>Zoom In</button>
         <button onClick={() => setScale(scale - 0.1)}>Zoom Out</button>
       </nav> */}
-      <div className="pdf-viewer h-80vh">
+      <div className="pdf-viewer min-h-80vh">
         <SimpleBar autoHide={false} className="simplebar-maxheight">
           <div ref={ref}>
             <Document
