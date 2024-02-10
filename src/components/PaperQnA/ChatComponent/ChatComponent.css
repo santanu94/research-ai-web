@@ -12,7 +12,11 @@
     flex-grow: 1;
     max-height: calc(100vh - 125px);
     overflow-y: auto;
-    justify-content: flex-end;
+    /* justify-content: flex-end; */
+}
+
+.messages-display > :first-child {
+  margin-top: auto;
 }
   
 .message {
