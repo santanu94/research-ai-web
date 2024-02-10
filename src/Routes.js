@@ -11,6 +11,24 @@ import PaperQnA from "./components/PaperQnA/PaperQnA";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import { auth_db, auth_token } from "./utils/authenticate";
 
+const styles = {
+  loadingScreen: {
+    paddingTop: "10%",
+  },
+
+  spinnerDimension: {
+    height: "1.5rem",
+    width: "1.5rem",
+  },
+
+  loadingTextHeadline: {
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    marginTop: "25px",
+    marginBottom: "10px",
+  },
+};
+
 const PrivateRoute = ({ children }) => {
   const { user, isLoading } = useKindeAuth();
   const token = localStorage.getItem("userToken");
@@ -56,7 +74,25 @@ const PrivateRoute = ({ children }) => {
   }, [token, user, isLoading]);
 
   if (userAuthenticated === null || isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        className="d-flex align-items-center flex-column vh-100"
+        style={styles.loadingScreen}
+      >
+        <div
+          className="spinner spinner-grow"
+          style={styles.spinnerDimension}
+          role="status"
+        ></div>
+        <div style={styles.loadingTextHeadline}>
+          Loading Profile, please wait...
+        </div>
+        <div>
+          (If you do not get automatically redirected, please Refresh the page
+          and try again)
+        </div>
+      </div>
+    );
   }
 
   return userAuthenticated ? children : <Navigate to="/" />;
