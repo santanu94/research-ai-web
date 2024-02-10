@@ -10,6 +10,7 @@ const LandingPage = () => {
     <>
       <Navbar />
       <div className="landing-page">
+        <div className="release">Alpha Release</div>
         <h1 className="landing-title">
           Revolutionize
           <br />
