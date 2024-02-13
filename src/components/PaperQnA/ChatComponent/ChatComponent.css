@@ -146,4 +146,8 @@
     50% { opacity: 1; }
     100% { opacity: 0.1; }
   }
-  
+
+  .socketio-reconnect-indicator {
+    height: 1.5rem;
+    width: auto;
+  }

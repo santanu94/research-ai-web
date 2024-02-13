@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./ChatComponent.css";
-import { IoSend } from "react-icons/io5";
+import { IoSend, IoReload } from "react-icons/io5";
 import { MdErrorOutline } from "react-icons/md";
 import { io } from "socket.io-client";
 
 const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
   path: process.env.REACT_APP_CHAT_PATH,
   autoConnect: false,
+  reconnectionDelay: 3000,
+  reconnectionAttempts: 5,
 });
 
 const ChatComponent = ({ paper_id }) => {
@@ -17,7 +19,9 @@ const ChatComponent = ({ paper_id }) => {
   const [socketioIsConnected, setSocketioIsConnected] = useState(
     socket.connected
   );
+  const [socketioReconnecting, setSocketioReconnecting] = useState(true);
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
+  let inactivityTimer;
 
   useEffect(() => {
     // fetch(process.env.REACT_APP_PAPER_PREPROCESS_API, {
@@ -35,7 +39,7 @@ const ChatComponent = ({ paper_id }) => {
         if (response.status === 200) {
           socket.connect();
           setupSocketListeners();
-          // setIsPreprocessing(false);
+          setIsPreprocessing(false);
         } else {
           setIsPreprocessing(false);
           setPreprocessingError(true);
@@ -51,21 +55,46 @@ const ChatComponent = ({ paper_id }) => {
       socket.off("disconnect");
       socket.off("receiveQueryResponse");
       socket.disconnect();
+      clearTimeout(inactivityTimer);
     };
   }, []);
+
+  const resetInactivityTimer = () => {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+      socket.disconnect();
+      setSocketioIsConnected(false);
+    }, 900000); // (900000) 15 minutes in milliseconds
+  };
+
+  const handleReconnectChat = () => {
+    socket.connect();
+    // setSocketioIsConnected(true);
+    // resetInactivityTimer(); // Reset inactivity timer on reconnect
+  };
 
   const setupSocketListeners = () => {
     socket.on("connect", () => {
       console.log("Connected to WebSocket");
-      setIsPreprocessing(false);
+      resetInactivityTimer(); // reset inactivity timer after socketio connection
+      setSocketioIsConnected(true);
+      setSocketioReconnecting(false);
     });
 
     socket.on("disconnect", () => {
       console.log("Disconnected from WebSocket");
-      setIsPreprocessing(true);
+      setSocketioIsConnected(false);
+      setSocketioReconnecting(false);
+    });
 
-      // Attempt to reconnect
-      socket.connect();
+    socket.io.on("reconnect_attempt", () => {
+      console.log("reconnecting");
+      setSocketioReconnecting(true);
+    });
+
+    socket.io.on("reconnect_failed", () => {
+      console.log("reconnect failed");
+      setSocketioReconnecting(false);
     });
 
     socket.on("receiveQueryResponse", (incomingMessage) => {
@@ -116,6 +145,7 @@ const ChatComponent = ({ paper_id }) => {
       setMessages([...messages, { type: "user-message", text: newMessage }]);
       setNewMessage("");
       setIsAssistantTyping(true);
+      resetInactivityTimer();
     }
   };
 
@@ -161,20 +191,46 @@ const ChatComponent = ({ paper_id }) => {
             id="message-input"
             placeholder="Leave a comment here"
             value={newMessage}
-            disabled={isAssistantTyping}
+            disabled={isAssistantTyping || !socketioIsConnected}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             onInput={handleInput}
           ></textarea>
           <label for="message-input">Type your question here...</label>
         </div>
-        <button
+        {/* <button
           className="btn d-flex align-self-center"
           type="button"
           onClick={handleSendMessage}
         >
           <IoSend />
-        </button>
+        </button> */}
+        {!socketioIsConnected ? (
+          <>
+            {socketioReconnecting ? (
+              <button className="btn d-flex align-self-center pe-none">
+                <div
+                  className="btn spinner spinner-grow align-self-center socketio-reconnect-indicator"
+                  role="status"
+                ></div>
+              </button>
+            ) : (
+              <button
+                className="btn d-flex align-self-center"
+                onClick={handleReconnectChat}
+              >
+                <IoReload />
+              </button>
+            )}
+          </>
+        ) : (
+          <button
+            className="btn d-flex align-self-center"
+            onClick={handleSendMessage}
+          >
+            <IoSend />
+          </button>
+        )}
       </div>
     </div>
   );
