@@ -3,6 +3,7 @@ import "./ChatComponent.css";
 import { IoSend, IoReload } from "react-icons/io5";
 import { MdErrorOutline } from "react-icons/md";
 import { io } from "socket.io-client";
+import { v4 as uuidv4 } from "uuid";
 
 const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
   path: process.env.REACT_APP_CHAT_PATH,
@@ -11,7 +12,7 @@ const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
   reconnectionAttempts: 5,
 });
 
-const ChatComponent = ({ paper_id }) => {
+const ChatComponent = ({ paperId }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isPreprocessing, setIsPreprocessing] = useState(true);
@@ -24,7 +25,6 @@ const ChatComponent = ({ paper_id }) => {
   let inactivityTimer;
 
   useEffect(() => {
-    // fetch(process.env.REACT_APP_PAPER_PREPROCESS_API, {
     fetch(
       `${process.env.REACT_APP_CHAT_DOMAIN}${process.env.REACT_APP_PAPER_PREPROCESS_ENDPOINT}`,
       {
@@ -32,7 +32,7 @@ const ChatComponent = ({ paper_id }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ paper_id }),
+        body: JSON.stringify({ paper_id: paperId }),
       }
     )
       .then((response) => {
@@ -64,7 +64,7 @@ const ChatComponent = ({ paper_id }) => {
     inactivityTimer = setTimeout(() => {
       socket.disconnect();
       setSocketioIsConnected(false);
-    }, 900000); // (900000) 15 minutes in milliseconds
+    }, 1.8e6); // (900000) 15 minutes in milliseconds
   };
 
   const handleReconnectChat = () => {
@@ -102,7 +102,11 @@ const ChatComponent = ({ paper_id }) => {
       if (incomingMessage.status === 200) {
         setMessages((prevMessages) => [
           ...prevMessages,
-          { type: "assistant-message", text: incomingMessage.response },
+          {
+            type: "assistant-message",
+            text: incomingMessage.response,
+            conversationId: incomingMessage.conversation_id,
+          },
         ]);
         setIsAssistantTyping(false);
       } else {
@@ -140,12 +144,23 @@ const ChatComponent = ({ paper_id }) => {
   const handleSendMessage = async () => {
     if (newMessage.trim() !== "") {
       // Send message to your API
-      socket.emit("sendQuery", { message: newMessage, paper_id });
+      const conversationId = uuidv4();
+      socket.emit("sendQuery", {
+        message: newMessage,
+        paper_id: paperId,
+        conversation_id: conversationId,
+      });
       // Assume the message is sent successfully and add it to messages
-      setMessages([...messages, { type: "user-message", text: newMessage }]);
+      setMessages([
+        ...messages,
+        {
+          type: "user-message",
+          text: newMessage,
+          conversationId: conversationId,
+        },
+      ]);
       setNewMessage("");
       setIsAssistantTyping(true);
-      resetInactivityTimer();
     }
   };
 
@@ -154,6 +169,7 @@ const ChatComponent = ({ paper_id }) => {
       event.preventDefault();
       handleSendMessage();
     }
+    resetInactivityTimer();
   };
 
   const handleInput = (e) => {

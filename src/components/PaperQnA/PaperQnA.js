@@ -30,7 +30,7 @@ const PaperQnA = () => {
           <PDFViewer url={pdfUrl} />
         </div>
         <div className="chatroom">
-          <ChatComponent paper_id={id} />
+          <ChatComponent paperId={id} />
         </div>
       </div>
     </div>
