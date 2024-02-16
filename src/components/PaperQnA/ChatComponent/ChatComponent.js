@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./ChatComponent.css";
-import { IoSend, IoReload } from "react-icons/io5";
+import { IoSend, IoReload, IoThumbsUpOutline } from "react-icons/io5";
 import { MdErrorOutline } from "react-icons/md";
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { LuThumbsUp, LuThumbsDown } from "react-icons/lu";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 
@@ -177,14 +179,99 @@ const ChatComponent = ({ paperId }) => {
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
+  const handleFeedback = (conversationId, feedback) => {
+    // Update local state to show selected feedback
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.conversationId === conversationId ? { ...msg, feedback } : msg
+      )
+    );
+
+    // Send POST request with feedback
+    fetch(
+      `${process.env.REACT_APP_CHAT_DOMAIN}${process.env.REACT_APP_FEEDBACK_ENDPOINT}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ conversation_id: conversationId, feedback }),
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          // Handle response error
+          console.error("Feedback submission failed");
+        }
+      })
+      .catch((error) => {
+        // Handle network error
+        console.error("Network error:", error);
+      });
+  };
+
   return (
     <div className="chat-container">
       {/* Messages display */}
       <div className="messages-display">
         {messages.map((msg, index) => (
-          <div key={index} className={`message ${msg.type}`}>
-            {msg.text}
-          </div>
+          <>
+            <div
+              key={index}
+              className={`d-flex flex-column message-box message-box-${msg.type}`}
+            >
+              <div className={`message ${msg.type}`}>{msg.text}</div>
+              {msg.type === "assistant-message" && (
+                <div className="feedback-spacer">
+                  <div className="feedback-icons">
+                    <LuThumbsUp
+                      className={`feedback-icon ${
+                        msg.feedback === "thumbs-up" ? "selected" : ""
+                      }`}
+                      onClick={() =>
+                        handleFeedback(msg.conversationId, "thumbs-up")
+                      }
+                    />
+                    <LuThumbsDown
+                      className={`feedback-icon ${
+                        msg.feedback === "thumbs-down" ? "selected" : ""
+                      }`}
+                      onClick={() =>
+                        handleFeedback(msg.conversationId, "thumbs-down")
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* <div key={index} className={`message ${msg.type}`}>
+              {msg.text}
+            </div>
+            <div>
+              {msg.type === "assistant-message" && (
+                <div className="feedback-spacer">
+                  <div className="feedback-icons">
+                    <FaThumbsUp
+                      className={`feedback-icon ${
+                        msg.feedback === "thumbs-up" ? "selected" : ""
+                      }`}
+                      onClick={() =>
+                        handleFeedback(msg.conversationId, "thumbs-up")
+                      }
+                    />
+                    <FaThumbsDown
+                      className={`feedback-icon ${
+                        msg.feedback === "thumbs-down" ? "selected" : ""
+                      }`}
+                      onClick={() =>
+                        handleFeedback(msg.conversationId, "thumbs-down")
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+            </div> */}
+          </>
         ))}
 
         {isAssistantTyping && (

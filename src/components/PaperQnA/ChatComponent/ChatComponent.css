@@ -18,12 +18,13 @@
 .messages-display > :first-child {
   margin-top: auto;
 }
-  
+
+.message-box {
+  padding: 2px 20px;
+}
 .message {
-    max-width: 60%;
     margin: 5px;
     padding: 15px 20px;
-    border: 1px solid #ddd;
     border-radius: 10px;
     word-break: break-word;
 }
@@ -59,13 +60,20 @@
     margin: auto;
 }
 
+.message-box-user-message {
+  align-self: flex-end;
+}
+
 .user-message {
-    align-self: flex-end;
     background-color: #867ed2;
     color: var(--white)
     /* background-color: #DCF8C6; */
 }
-  
+
+.message-box-assistant-message {
+  align-self: flex-start;
+}
+
 .assistant-message {
     align-self: flex-start;
     /* background-color: #EFEDFA; */
@@ -151,3 +159,26 @@
     height: 1.5rem;
     width: auto;
   }
+
+  .feedback-spacer {
+    align-self: flex-end;
+    margin-right: 20px;
+    margin-bottom: 25px;
+  }
+
+  .feedback-icons {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+    font-size: 1.2rem;
+  }
+  
+  .feedback-icon {
+    cursor: pointer;
+    margin: 0 5px;
+  }
+  
+  .feedback-icon.selected {
+    color: #6047ca; /* Or any color to indicate selection */
+  }
+  
