@@ -8,6 +8,7 @@ import SearchResults from "./SearchResults/SearchResults";
 
 const Dashboard = () => {
   const { user, isLoading } = useKindeAuth();
+  const [searchId, setSearchId] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
@@ -58,6 +59,7 @@ const Dashboard = () => {
           </span>
           <SearchBar
             setSearchResults={setSearchResults}
+            setSearchId={setSearchId}
             additionalClassName={showSearchResults ? "raised" : ""}
           />
         </div>
@@ -65,6 +67,7 @@ const Dashboard = () => {
         {showSearchResults && (
           <SearchResults
             results={searchResults}
+            searchId={searchId}
             onClose={() => setShowSearchResults(false)}
             additionalClassName="active"
           />

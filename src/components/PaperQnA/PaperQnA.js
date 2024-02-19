@@ -2,7 +2,7 @@
 import React from "react";
 import "./PaperQnA.css";
 import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ChatComponent from "./ChatComponent/ChatComponent";
 import PDFViewer from "./PDFViewer/PDFViewer";
 import { IoChevronBackOutline } from "react-icons/io5";
@@ -10,7 +10,11 @@ import { IoChevronBackOutline } from "react-icons/io5";
 const PaperQnA = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const pdfUrl = `https://arxiv.org/pdf/${id}.pdf`;
+  const location = useLocation();
+  var { searchId, pdfUrl } = location.state || {};
+  console.log(searchId);
+  pdfUrl = !pdfUrl.endsWith(".pdf") ? `${pdfUrl}.pdf` : pdfUrl;
+  // const pdfUrl = `https://arxiv.org/pdf/${id}.pdf`;
 
   return (
     <div>
@@ -30,7 +34,7 @@ const PaperQnA = () => {
           <PDFViewer url={pdfUrl} />
         </div>
         <div className="chatroom">
-          <ChatComponent paperId={id} />
+          <ChatComponent paperId={id} searchId={searchId} />
         </div>
       </div>
     </div>

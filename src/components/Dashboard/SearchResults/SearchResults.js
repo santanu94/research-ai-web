@@ -3,11 +3,11 @@ import "./SearchResults.css";
 import { useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
 
-const SearchResults = ({ results, onClose, additionalClassName }) => {
+const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
   const navigate = useNavigate();
 
-  const handleResultClick = (id) => {
-    navigate(`/paper/${id}`);
+  const handleResultClick = (id, pdfUrl) => {
+    navigate(`/paper/${id}`, { state: { searchId, pdfUrl } });
   };
   return (
     <div className={`search-results-overlay ${additionalClassName}`}>
@@ -20,18 +20,13 @@ const SearchResults = ({ results, onClose, additionalClassName }) => {
             <div
               key={index}
               className="result-item"
-              onClick={() =>
-                handleResultClick(
-                  result.link.replace("http://arxiv.org/abs/", "")
-                  // result.title
-                )
-              }
+              onClick={() => handleResultClick(result.id, result.url)}
             >
               <div className="result-title">{result.title}</div>
+              <div className="result-author">{result.authors}</div>
               <div className="result-author">
-                {result.authors.map((author) => author.trim()).join(", ")}
+                Published on - {result.published}
               </div>
-              <div className="result-author">Published on - {result.date}</div>
             </div>
           ))}
         </div>

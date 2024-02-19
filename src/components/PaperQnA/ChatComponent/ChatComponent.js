@@ -14,7 +14,7 @@ const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
   reconnectionAttempts: 5,
 });
 
-const ChatComponent = ({ paperId }) => {
+const ChatComponent = ({ paperId, searchId }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isPreprocessing, setIsPreprocessing] = useState(true);
@@ -151,6 +151,7 @@ const ChatComponent = ({ paperId }) => {
         message: newMessage,
         paper_id: paperId,
         conversation_id: conversationId,
+        search_id: searchId,
       });
       // Assume the message is sent successfully and add it to messages
       setMessages([
