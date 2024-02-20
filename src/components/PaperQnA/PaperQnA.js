@@ -13,6 +13,11 @@ const PaperQnA = () => {
   const location = useLocation();
   var { searchId, pdfUrl } = location.state || {};
   console.log(searchId);
+
+  // format pdf url
+  pdfUrl = pdfUrl.startsWith("http://")
+    ? pdfUrl.replace("http://", "https://")
+    : pdfUrl;
   pdfUrl = !pdfUrl.endsWith(".pdf") ? `${pdfUrl}.pdf` : pdfUrl;
   // const pdfUrl = `https://arxiv.org/pdf/${id}.pdf`;
 
