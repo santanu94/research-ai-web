@@ -3,6 +3,7 @@ import "./SearchBar.css";
 import { IoSearch } from "react-icons/io5";
 import { arxiv_search } from "../../../utils/arxiv";
 import { v4 as uuidv4 } from "uuid";
+import posthog from "posthog-js";
 
 const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,11 +15,12 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
   };
 
   const performSearch = async () => {
+    const searchId = uuidv4();
+    posthog.capture("search_paper", { page: "dashboard", search_id: searchId });
     try {
       setIsFetchingPapers(true);
       // const results = await arxiv_search({ [searchField]: searchTerm });
 
-      const searchId = uuidv4();
       var search_results = [];
       await fetch(
         `${process.env.REACT_APP_SEARCH_DOMAIN}${process.env.REACT_APP_SEARCH_ENDPOINT}`,

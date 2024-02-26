@@ -6,6 +6,7 @@ import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { LuThumbsUp, LuThumbsDown } from "react-icons/lu";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import posthog from "posthog-js";
 
 const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
   path: process.env.REACT_APP_CHAT_PATH,
@@ -147,6 +148,14 @@ const ChatComponent = ({ paperId, searchId }) => {
     if (newMessage.trim() !== "") {
       // Send message to your API
       const conversationId = uuidv4();
+
+      // log activity
+      posthog.capture("send_query_to_agent", {
+        search_id: searchId,
+        conversation_id: conversationId,
+      });
+
+      // send message to server
       socket.emit("sendQuery", {
         message: newMessage,
         paper_id: paperId,

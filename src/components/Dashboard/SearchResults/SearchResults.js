@@ -2,11 +2,13 @@ import React from "react";
 import "./SearchResults.css";
 import { useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
+import posthog from "posthog-js";
 
 const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
   const navigate = useNavigate();
 
   const handleResultClick = (id, pdfUrl) => {
+    posthog.capture("open_paper", { paper_id: id, search_id: searchId });
     navigate(`/paper/${id}`, { state: { searchId, pdfUrl } });
   };
   return (

@@ -5,15 +5,18 @@ import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import UserControlPanel from "../UserControlPanel/UserControlPanel";
 import SearchBar from "./SearchBar/SearchBar";
 import SearchResults from "./SearchResults/SearchResults";
+import posthog from "posthog-js";
 
 const Dashboard = () => {
   const { user, isLoading } = useKindeAuth();
   const [searchId, setSearchId] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  posthog.identify(user.given_name);
 
   useEffect(() => {
     if (searchResults && searchResults.length > 0) {
+      posthog.capture("fetched_search_results", { search_id: searchId });
       setShowSearchResults(true);
     }
   }, [searchResults]);
@@ -29,6 +32,11 @@ const Dashboard = () => {
     }
   };
   const greeting = getGreetingBasedOnTime();
+
+  const closeShowResults = () => {
+    setShowSearchResults(false);
+    posthog.capture("closed_search_results", { search_id: searchId });
+  };
 
   if (isLoading) {
     return (
@@ -68,7 +76,7 @@ const Dashboard = () => {
           <SearchResults
             results={searchResults}
             searchId={searchId}
-            onClose={() => setShowSearchResults(false)}
+            onClose={closeShowResults}
             additionalClassName="active"
           />
         )}

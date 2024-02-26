@@ -4,12 +4,14 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import LandingPage from "./components/LandingPage/LandingPage";
 import Dashboard from "./components/Dashboard/Dashboard";
 import PaperQnA from "./components/PaperQnA/PaperQnA";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import { auth_db, auth_token } from "./utils/authenticate";
+import posthog from "posthog-js";
 
 const styles = {
   loadingScreen: {
@@ -33,6 +35,7 @@ const PrivateRoute = ({ children }) => {
   const { user, isLoading } = useKindeAuth();
   const token = localStorage.getItem("userToken");
   const [userAuthenticated, setUserAuthenticated] = useState(null);
+  let location = useLocation();
 
   useEffect(() => {
     const verifyUser = async () => {
@@ -72,6 +75,11 @@ const PrivateRoute = ({ children }) => {
     };
     verifyUser();
   }, [token, user, isLoading]);
+
+  // capture pageview event in posthog
+  useEffect(() => {
+    posthog.capture("$pageview");
+  }, [location]);
 
   if (userAuthenticated === null || isLoading) {
     return (

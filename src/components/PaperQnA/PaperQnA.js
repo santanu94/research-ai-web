@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ChatComponent from "./ChatComponent/ChatComponent";
 import PDFViewer from "./PDFViewer/PDFViewer";
 import { IoChevronBackOutline } from "react-icons/io5";
+import posthog from "posthog-js";
 
 const PaperQnA = () => {
   const { id } = useParams();
@@ -21,13 +22,20 @@ const PaperQnA = () => {
   pdfUrl = !pdfUrl.endsWith(".pdf") ? `${pdfUrl}.pdf` : pdfUrl;
   // const pdfUrl = `https://arxiv.org/pdf/${id}.pdf`;
 
+  const backToDashboard = () => {
+    posthog.capture("clicked_back_to_dashboard_from_chat", {
+      search_id: searchId,
+    });
+    navigate(-1);
+  };
+
   return (
     <div>
       <div>
         <div className="d-flex align-items-center back-to-dash">
           <button
             className="d-flex border border-0 bg-transparent back-button"
-            onClick={() => navigate(-1)}
+            onClick={backToDashboard}
           >
             <IoChevronBackOutline />
             <span className="text">Back to Dashboard</span>

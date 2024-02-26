@@ -2,9 +2,15 @@ import React from "react";
 import "./LandingPage.css";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import Navbar from "../Navbar/Navbar";
+import posthog from "posthog-js";
 
 const LandingPage = () => {
   const { register } = useKindeAuth();
+
+  const handleGetStarted = () => {
+    posthog.capture("get_started_button_clicked", { page: "landing page" });
+    register();
+  };
 
   return (
     <>
@@ -22,7 +28,7 @@ const LandingPage = () => {
           Dive into research with ease and turn complex papers into clear,
           easily graspable insights.
         </p>
-        <button className="btn btn-primary" onClick={register}>
+        <button className="btn btn-primary" onClick={handleGetStarted}>
           Get Started
         </button>
         <div className="credit">
