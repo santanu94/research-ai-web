@@ -74,11 +74,11 @@
 }
 
 .topic-tag {
-  background-color: #E0E0E0; /* Light gray background */
+  background-color: var(--search-topic-background);
   border-radius: 15px; /* Rounded corners for bubble effect */
   padding: 5px 10px; /* Padding inside the bubble */
   margin-right: 5px; /* Space between tags */
   margin-bottom: 5px; /* Space below each tag */
   font-size: 0.8rem; /* Smaller font size for tags */
-  color: #333; /* Dark text color for contrast */
+  color: var(--search-topic-text);
 }
