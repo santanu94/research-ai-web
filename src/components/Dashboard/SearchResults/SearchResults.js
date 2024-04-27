@@ -29,6 +29,17 @@ const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
               <div className="result-author">
                 Published on - {result.published}
               </div>
+              <div className="result-topics">
+                {result.topics &&
+                  result.topics.split(",").map(
+                    (topic, index) =>
+                      topic.trim() && (
+                        <span key={index} className="topic-tag">
+                          {topic.trim()}
+                        </span>
+                      )
+                  )}
+              </div>
             </div>
           ))}
         </div>

@@ -65,3 +65,20 @@
   font-size: 14px;
   color: var(--light-grey);
 }
+
+.result-topics {
+  padding-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.topic-tag {
+  background-color: #E0E0E0; /* Light gray background */
+  border-radius: 15px; /* Rounded corners for bubble effect */
+  padding: 5px 10px; /* Padding inside the bubble */
+  margin-right: 5px; /* Space between tags */
+  margin-bottom: 5px; /* Space below each tag */
+  font-size: 0.8rem; /* Smaller font size for tags */
+  color: #333; /* Dark text color for contrast */
+}
