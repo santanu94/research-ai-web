@@ -16,10 +16,13 @@ const PaperQnA = () => {
   console.log(searchId);
 
   // format pdf url
-  pdfUrl = pdfUrl.startsWith("http://")
-    ? pdfUrl.replace("http://", "https://")
-    : pdfUrl;
-  pdfUrl = !pdfUrl.endsWith(".pdf") ? `${pdfUrl}.pdf` : pdfUrl;
+  // pdfUrl = pdfUrl.startsWith("http://")
+  //   ? pdfUrl.replace("http://", "https://")
+  //   : pdfUrl;
+  // pdfUrl = !pdfUrl.endsWith(".pdf") ? `${pdfUrl}.pdf` : pdfUrl;
+  pdfUrl = pdfUrl.endsWith(".pdf") ? pdfUrl.slice(0, -4) : pdfUrl;
+  const paper_id = pdfUrl.split("/").pop();
+  pdfUrl = `https://arxiv.org/pdf/${paper_id}`;
   // const pdfUrl = `https://arxiv.org/pdf/${id}.pdf`;
 
   const backToDashboard = () => {
