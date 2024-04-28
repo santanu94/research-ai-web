@@ -79,7 +79,8 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
       <input
         className="search-bar"
         type="text"
-        placeholder="Search research papers, authors or conferences"
+        // placeholder="Search research papers, authors or conferences"
+        placeholder="Search research paper by name or topic, e.g. 'latest rag papers', 'lima paper', ..."
         onChange={handleSearchChange}
         onKeyPress={handleSearchKeyPress}
         value={searchTerm}
