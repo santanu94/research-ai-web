@@ -4,6 +4,13 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import posthog from "posthog-js";
+import mixpanel from "mixpanel-browser";
+
+mixpanel.init(process.env.REACT_APP_MIXPANEL_PROJECT_TOKEN, {
+  debug: true,
+  ignore_dnt: true,
+  persistence: "localStorage",
+});
 
 posthog.init(process.env.REACT_APP_POSTHOG_API, {
   api_host: "https://app.posthog.com",
