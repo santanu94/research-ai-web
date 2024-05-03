@@ -3,6 +3,7 @@ import "./LandingPage.css";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import posthog from "posthog-js";
 import { FaXTwitter, FaLinkedinIn } from "react-icons/fa6";
+import mixpanel from "mixpanel-browser";
 import Navbar from "../Navbar/Navbar";
 import heroImage from "../../assets/images/landing-page-preview.png";
 import SearchPreviewImage from "../../assets/images/search-preview.png";
@@ -11,13 +12,18 @@ import ChatPreviewImage from "../../assets/images/chat-preview.png";
 const LandingPage = () => {
   const { register } = useKindeAuth();
   const ref = useRef(null);
+  mixpanel.track_pageview({ page: "Landing Page" });
 
   const handleExploreButtonClick = () => {
+    mixpanel.track("Clicked Explore Button");
+    // mixpanel.track_links("#explore-btn", "Clicked Explore Button");
     ref.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleGetStarted = () => {
     posthog.capture("get_started_button_clicked", { page: "landing page" });
+    mixpanel.track("Clicked Get Started Button");
+    // mixpanel.track_links("#get-started-btn", "Clicked Get Started Button");
     register();
   };
 
@@ -37,10 +43,15 @@ const LandingPage = () => {
                 <span className="highlight">understandable</span>
               </span>
               <div className="call-to-action-buttons-div">
-                <button className="btn btn-primary" onClick={handleGetStarted}>
+                <button
+                  id="get-started-btn"
+                  className="btn btn-primary"
+                  onClick={handleGetStarted}
+                >
                   Get Started
                 </button>
                 <button
+                  id="explore-btn"
                   type="button"
                   onClick={handleExploreButtonClick}
                   className="btn btn-light btn-explore"

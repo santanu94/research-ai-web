@@ -7,12 +7,15 @@ import ChatComponent from "./ChatComponent/ChatComponent";
 import PDFViewer from "./PDFViewer/PDFViewer";
 import { IoChevronBackOutline } from "react-icons/io5";
 import posthog from "posthog-js";
+import mixpanel from "mixpanel-browser";
 
 const PaperQnA = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   var { searchId, pdfUrl } = location.state || {};
+
+  mixpanel.track_pageview({ page: "QnA Page" });
   console.log(searchId);
 
   // format pdf url
@@ -29,6 +32,7 @@ const PaperQnA = () => {
     posthog.capture("clicked_back_to_dashboard_from_chat", {
       search_id: searchId,
     });
+    mixpanel.track("Clicked on Back to Dashboard");
     navigate(-1);
   };
 

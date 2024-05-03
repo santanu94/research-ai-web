@@ -6,6 +6,7 @@ import UserControlPanel from "../UserControlPanel/UserControlPanel";
 import SearchBar from "./SearchBar/SearchBar";
 import SearchResults from "./SearchResults/SearchResults";
 import posthog from "posthog-js";
+import mixpanel from "mixpanel-browser";
 
 const Dashboard = () => {
   const { user, isLoading } = useKindeAuth();
@@ -13,10 +14,13 @@ const Dashboard = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   posthog.identify(user.given_name);
+  mixpanel.identify();
+  mixpanel.track_pageview({ page: "Dashboard Page" });
 
   useEffect(() => {
     if (searchResults && searchResults.length > 0) {
       posthog.capture("fetched_search_results", { search_id: searchId });
+      mixpanel.track("Featched Search Results", { search_id: searchId });
       setShowSearchResults(true);
     }
   }, [searchResults]);
@@ -36,6 +40,7 @@ const Dashboard = () => {
   const closeShowResults = () => {
     setShowSearchResults(false);
     posthog.capture("closed_search_results", { search_id: searchId });
+    mixpanel.track("Closed Search Results", { search_id: searchId });
   };
 
   if (isLoading) {

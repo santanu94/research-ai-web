@@ -4,6 +4,7 @@ import { IoSearch } from "react-icons/io5";
 import { arxiv_search } from "../../../utils/arxiv";
 import { v4 as uuidv4 } from "uuid";
 import posthog from "posthog-js";
+import mixpanel from "mixpanel-browser";
 
 const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +18,7 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
   const performSearch = async () => {
     const searchId = uuidv4();
     posthog.capture("search_paper", { page: "dashboard", search_id: searchId });
+    mixpanel.track("Searched Paper");
     try {
       setIsFetchingPapers(true);
       // const results = await arxiv_search({ [searchField]: searchTerm });

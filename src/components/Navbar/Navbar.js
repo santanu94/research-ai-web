@@ -2,17 +2,20 @@ import React from "react";
 import "./Navbar.css";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import posthog from "posthog-js";
+import mixpanel from "mixpanel-browser";
 
 const Navbar = () => {
   const { login, register } = useKindeAuth();
 
   const handleGetStarted = () => {
     posthog.capture("get_started_button_clicked", { page: "navbar" });
+    mixpanel.track("Clicked navbar Get Started Button");
     register();
   };
 
   const handleSignIn = () => {
     posthog.capture("sign_in_button_clicked", { page: "navbar" });
+    mixpanel.track("Clicked navbar Sign In Button");
     login();
   };
 

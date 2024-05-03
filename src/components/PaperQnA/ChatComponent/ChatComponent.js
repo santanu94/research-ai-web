@@ -7,6 +7,7 @@ import { LuThumbsUp, LuThumbsDown } from "react-icons/lu";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import posthog from "posthog-js";
+import mixpanel from "mixpanel-browser";
 
 const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
   path: process.env.REACT_APP_CHAT_PATH,
@@ -151,6 +152,10 @@ const ChatComponent = ({ paperId, searchId }) => {
 
       // log activity
       posthog.capture("send_query_to_agent", {
+        search_id: searchId,
+        conversation_id: conversationId,
+      });
+      mixpanel.track("Asked question", {
         search_id: searchId,
         conversation_id: conversationId,
       });

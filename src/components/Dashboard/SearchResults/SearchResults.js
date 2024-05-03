@@ -3,12 +3,17 @@ import "./SearchResults.css";
 import { useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
 import posthog from "posthog-js";
+import mixpanel from "mixpanel-browser";
 
 const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
   const navigate = useNavigate();
+  mixpanel.track_pageview({ page: "Searched Papers" });
 
   const handleResultClick = (id, pdfUrl) => {
     posthog.capture("open_paper", { paper_id: id, search_id: searchId });
+    // mixpanel.track_links("#paper-result", "Clicked to Open Paper");
+    mixpanel.track("Clicked to Open Paper");
+
     navigate(`/paper/${id}`, { state: { searchId, pdfUrl } });
   };
   return (
@@ -20,6 +25,7 @@ const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
         <div className="result-display-area">
           {results.map((result, index) => (
             <div
+              id="paper-result"
               key={index}
               className="result-item"
               onClick={() => handleResultClick(result.id, result.url)}

@@ -5,9 +5,16 @@ import { NavLink } from "react-router-dom";
 import { FaUser } from "react-icons/fa6";
 import { FaUserCircle, FaCog } from "react-icons/fa";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
+import mixpanel from "mixpanel-browser";
 
 const UserControlPanel = () => {
   const { logout } = useKindeAuth();
+
+  const handleLogout = () => {
+    mixpanel.track("Clicked Logout Button");
+    logout();
+    mixpanel.reset();
+  };
 
   return (
     <div className="user-control-panel d-flex flex-column align-items-center">
@@ -31,7 +38,7 @@ const UserControlPanel = () => {
           </div>
           <ul className="dropdown-menu">
             <li>
-              <button className="dropdown-item logout" onClick={() => logout()}>
+              <button className="dropdown-item logout" onClick={handleLogout}>
                 Logout
               </button>
             </li>
