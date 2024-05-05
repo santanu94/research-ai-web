@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 // import { useNavigate } from "react-router-dom";
+import { useSearch } from "../../context/SearchContext";
 import UserControlPanel from "../UserControlPanel/UserControlPanel";
 import SearchBar from "./SearchBar/SearchBar";
 import SearchResults from "./SearchResults/SearchResults";
@@ -10,8 +11,10 @@ import mixpanel from "mixpanel-browser";
 
 const Dashboard = () => {
   const { user, isLoading } = useKindeAuth();
-  const [searchId, setSearchId] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
+  const { searchResults, setSearchResults, searchId, setSearchId } =
+    useSearch();
+  // const [searchId, setSearchId] = useState([]);
+  // const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   posthog.identify(user.given_name);
   mixpanel.identify();

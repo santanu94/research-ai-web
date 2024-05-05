@@ -14,7 +14,7 @@ const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
     // mixpanel.track_links("#paper-result", "Clicked to Open Paper");
     mixpanel.track("Clicked to Open Paper");
 
-    navigate(`/paper/${id}`, { state: { searchId, pdfUrl } });
+    navigate(`/paper/${id}`, { state: { pdfUrl } });
   };
   return (
     <div className={`search-results-overlay ${additionalClassName}`}>

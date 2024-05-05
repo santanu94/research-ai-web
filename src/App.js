@@ -4,6 +4,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 import { KindeProvider } from "@kinde-oss/kinde-auth-react";
+import { SearchProvider } from "./context/SearchContext";
 import Routes from "./Routes";
 
 function App() {
@@ -15,7 +16,9 @@ function App() {
       logoutUri={process.env.REACT_APP_KINDE_LOGOUT_URL}
       // onRedirectCallback={onRedirectCallback}
     >
-      <Routes />
+      <SearchProvider>
+        <Routes />
+      </SearchProvider>
     </KindeProvider>
   );
 }
