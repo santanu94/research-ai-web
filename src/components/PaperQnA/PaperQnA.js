@@ -30,10 +30,10 @@ const PaperQnA = () => {
   // const pdfUrl = `https://arxiv.org/pdf/${id}.pdf`;
 
   const backToDashboard = () => {
-    posthog.capture("clicked_back_to_dashboard_from_chat", {
+    posthog.capture("clicked_back_to_search_results_from_chat", {
       search_id: searchId,
     });
-    mixpanel.track("Clicked on Back to Dashboard");
+    mixpanel.track("Clicked on Back to Search Results");
     // navigate(-1);
     navigate("/dashboard");
   };
