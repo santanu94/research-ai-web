@@ -1,3 +1,11 @@
+.raised {
+    position: fixed;
+    width: 65%;
+    top: 0;
+    margin-top: 2rem;
+    z-index: 3;
+}
+
 .search-bar-container {
     display: flex;
     font-size: 20px;
@@ -34,15 +42,31 @@
     height: 1.2rem;
 }
 
-.search-bar-container.raised {
+/* .search-bar-container.raised {
     position: fixed;
     width: 65%;
     top: 0;
     margin-top: 2rem;
     z-index: 3;
+} */
+  
+.quick-search-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
 }
   
-.search-bar-container.raised .search-bar {
-    /* Additional styles when raised */
+.quick-search-bubble {
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 5px 10px;
+    min-width: 90px;
+    margin: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
   
+.quick-search-bubble:hover {
+    background-color: #e0e0e0;
+}

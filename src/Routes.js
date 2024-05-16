@@ -9,8 +9,11 @@ import {
 import LandingPage from "./components/LandingPage/LandingPage";
 import Dashboard from "./components/Dashboard/Dashboard";
 import PaperQnA from "./components/PaperQnA/PaperQnA";
+import TermsOfUsage from "./components/TermsOfUsage/TermsOfUsage";
+import PrivacyPolicy from "./components/PrivacyPolicy/PrivacyPolicy";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import { auth_db, auth_token } from "./utils/authenticate";
+// import { is_token_generated, is_token_valid } from "./utils/authenticate";
 import posthog from "posthog-js";
 
 const styles = {
@@ -34,8 +37,50 @@ const styles = {
 const PrivateRoute = ({ children }) => {
   const { user, isLoading } = useKindeAuth();
   const token = localStorage.getItem("userToken");
+  // let token = localStorage.getItem("userToken");
+  // const cachedUserData = JSON.parse(localStorage.getItem("userData"));
   const [userAuthenticated, setUserAuthenticated] = useState(null);
   let location = useLocation();
+
+  // const cache_user = async () => {
+  //   token = await is_token_generated(user);
+  //   if (token) {
+  //     localStorage.setItem("userToken", token);
+  //     localStorage.setItem("userData", user);
+  //     setUserAuthenticated(true);
+  //   } else {
+  //     localStorage.removeItem("userToken");
+  //     localStorage.removeItem("userData");
+  //     setUserAuthenticated(false);
+  //   }
+  // };
+
+  // const clear_cache = async () => {
+  //   localStorage.removeItem("userToken");
+  //   localStorage.removeItem("userData");
+  //   setUserAuthenticated(false);
+  // };
+
+  // useEffect(() => {
+  //   const verifyUser = async () => {
+  //     if (!isLoading) {
+  //       console.log(isLoading);
+  //       console.log(cachedUserData);
+  //       if (user) {
+  //         console.log(user, "-----------");
+  //         console.log("1");
+  //         await cache_user();
+  //       } else if (token && cachedUserData && is_token_valid(token)) {
+  //         console.log("2");
+  //         setUserAuthenticated(true);
+  //       } else {
+  //         console.log("3");
+  //         await clear_cache();
+  //       }
+  //     }
+  //   };
+  //   verifyUser();
+  // }, [isLoading]);
 
   useEffect(() => {
     const verifyUser = async () => {
@@ -75,11 +120,6 @@ const PrivateRoute = ({ children }) => {
     };
     verifyUser();
   }, [token, user, isLoading]);
-
-  // capture pageview event in posthog
-  useEffect(() => {
-    posthog.capture("$pageview");
-  }, [location]);
 
   if (userAuthenticated === null || isLoading) {
     return (
@@ -127,6 +167,8 @@ const RoutesComponent = () => {
             </PrivateRoute>
           }
         />
+        <Route path="/terms-of-usage" element={<TermsOfUsage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </Router>
   );

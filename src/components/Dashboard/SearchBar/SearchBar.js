@@ -10,12 +10,28 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchField, setSearchField] = useState("title");
   const [isFetchingPapers, setIsFetchingPapers] = useState(false);
+  const quickSearchOptions = [
+    "Llama 3",
+    "xLSTM",
+    "RAG",
+    "Chain of Thoughts",
+    "Tree of Thoughts",
+    "LLM Planning",
+  ];
+
+  const handleQuickSearch = async (searchOption) => {
+    mixpanel.track("Searched Paper with Quick Search");
+    setSearchTerm(searchOption);
+    await performSearch(searchOption);
+  };
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const performSearch = async () => {
+  const performSearch = async (searchQuery) => {
+    if (!searchQuery) return;
+
     const searchId = uuidv4();
     posthog.capture("search_paper", { page: "dashboard", search_id: searchId });
     mixpanel.track("Searched Paper");
@@ -31,7 +47,7 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ search_id: searchId, query: searchTerm }),
+          body: JSON.stringify({ search_id: searchId, query: searchQuery }),
         }
       )
         .then((response) => {
@@ -62,13 +78,14 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
 
   const handleSearchKeyPress = async (event) => {
     if (event.key === "Enter") {
-      performSearch();
+      performSearch(searchTerm);
     }
   };
 
   return (
-    <div className={`search-bar-container ${additionalClassName}`}>
-      {/* <select
+    <div className={additionalClassName}>
+      <div className="flex-row search-bar-container">
+        {/* <select
         value={searchField}
         onChange={(e) => setSearchField(e.target.value)}
         className="search-field-selector text-center"
@@ -78,25 +95,38 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
         <option value="abstrct">Abstract</option>
         <option value="all">All</option>
       </select> */}
-      <input
-        className="search-bar"
-        type="text"
-        // placeholder="Search research papers, authors or conferences"
-        placeholder="Search research paper by name or topic, e.g. 'latest rag papers', 'lima paper', ..."
-        onChange={handleSearchChange}
-        onKeyPress={handleSearchKeyPress}
-        value={searchTerm}
-        maxLength={255}
-      />
-      <div
-        className="search-icon d-flex align-items-center flex-shrink-1"
-        onClick={performSearch}
-      >
-        {isFetchingPapers ? (
-          <div className="spinner spinner-grow" role="status"></div>
-        ) : (
-          <IoSearch />
-        )}
+        <input
+          className="search-bar"
+          type="text"
+          // placeholder="Search research papers, authors or conferences"
+          placeholder="Search research paper by name or topic, e.g. 'latest rag papers', 'lima paper', ..."
+          onChange={handleSearchChange}
+          onKeyPress={handleSearchKeyPress}
+          value={searchTerm}
+          maxLength={255}
+        />
+        <div
+          className="search-icon d-flex align-items-center flex-shrink-1"
+          onClick={performSearch}
+        >
+          {isFetchingPapers ? (
+            <div className="spinner spinner-grow" role="status"></div>
+          ) : (
+            <IoSearch />
+          )}
+        </div>
+      </div>
+      <div className="flex-row quick-search-container">
+        <div class="align-self-center px-2">Quick Search :</div>
+        {quickSearchOptions.map((searchOption, index) => (
+          <div
+            key={index}
+            className="quick-search-bubble"
+            onClick={() => handleQuickSearch(searchOption)}
+          >
+            {searchOption}
+          </div>
+        ))}
       </div>
     </div>
   );
