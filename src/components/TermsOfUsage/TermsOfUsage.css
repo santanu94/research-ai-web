@@ -1,0 +1,28 @@
+.tou-container {
+    margin-top: 5%;
+    margin-bottom: 10%;
+    text-align: center;
+    max-width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tou-heading {
+    font-size: 2.5rem;
+}
+
+.tou-content {
+    text-align: justify;
+    margin-top: 3%;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #808080;
+}
+
+.tou-content p {
+    margin-top: 2%;
+}
+
+.tou-content b {
+    color: #333333;
+}

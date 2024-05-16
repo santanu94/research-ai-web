@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { Link } from "react-router-dom";
 import "./LandingPage.css";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import posthog from "posthog-js";
@@ -116,7 +117,8 @@ const LandingPage = () => {
             <div className="align-self-center mr-auto divider" />
           </div>
           <div className="d-flex flex-row justify-content-center tnc-section">
-            Terms and Conditions | Privacy Policy
+            <Link to="/terms-of-usage">Terms of Usage</Link> |{" "}
+            <Link to="/privacy-policy">Privacy Policy</Link>
           </div>
         </div>
       </div>
