@@ -117,8 +117,19 @@ const LandingPage = () => {
             <div className="align-self-center mr-auto divider" />
           </div>
           <div className="d-flex flex-row justify-content-center tnc-section">
-            <Link to="/terms-of-usage">Terms of Usage</Link> |{" "}
-            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link
+              className="mx-3 text-decoration-none text-dark"
+              to="/terms-of-usage"
+            >
+              Terms of Usage
+            </Link>{" "}
+            |{" "}
+            <Link
+              className="mx-3 text-decoration-none text-dark"
+              to="/privacy-policy"
+            >
+              Privacy Policy
+            </Link>
           </div>
         </div>
       </div>
