@@ -10,6 +10,7 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchField, setSearchField] = useState("title");
   const [isFetchingPapers, setIsFetchingPapers] = useState(false);
+  const [searchMode, setSearchMode] = useState("latest");
   const quickSearchOptions = [
     "Llama 3",
     "xLSTM",
@@ -30,10 +31,15 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
   };
 
   const performSearch = async (searchQuery) => {
+    console.log(searchQuery);
     if (!searchQuery) return;
 
     const searchId = uuidv4();
-    posthog.capture("search_paper", { page: "dashboard", search_id: searchId });
+    posthog.capture("search_paper", {
+      page: "dashboard",
+      search_id: searchId,
+      search_mode: searchMode,
+    });
     mixpanel.track("Searched Paper");
     try {
       setIsFetchingPapers(true);
@@ -47,7 +53,11 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ search_id: searchId, query: searchQuery }),
+          body: JSON.stringify({
+            search_id: searchId,
+            query: searchQuery,
+            search_mode: searchMode,
+          }),
         }
       )
         .then((response) => {
@@ -82,8 +92,14 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
     }
   };
 
+  const toggleSearchMode = () => {
+    setSearchMode((prevMode) =>
+      prevMode === "latest" ? "original" : "latest"
+    );
+  };
+
   return (
-    <div className={additionalClassName}>
+    <div className={`${additionalClassName} bg-grey`}>
       <div className="flex-row search-bar-container">
         {/* <select
         value={searchField}
@@ -99,7 +115,7 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
           className="search-bar"
           type="text"
           // placeholder="Search research papers, authors or conferences"
-          placeholder="Search research paper by name or topic, e.g. 'latest rag papers', 'lima paper', ..."
+          placeholder="Search research paper by name or topic."
           onChange={handleSearchChange}
           onKeyPress={handleSearchKeyPress}
           value={searchTerm}
@@ -107,7 +123,7 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
         />
         <div
           className="search-icon d-flex align-items-center flex-shrink-1"
-          onClick={performSearch}
+          onClick={() => performSearch(searchTerm)}
         >
           {isFetchingPapers ? (
             <div className="spinner spinner-grow" role="status"></div>
@@ -117,7 +133,7 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
         </div>
       </div>
       <div className="flex-row quick-search-container">
-        <div class="align-self-center px-2">Quick Search :</div>
+        <div class="align-self-center px-2">Popular Topics :</div>
         {quickSearchOptions.map((searchOption, index) => (
           <div
             key={index}
@@ -128,6 +144,31 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
           </div>
         ))}
       </div>
+
+      <div className="toggle-switch">
+        <span className={`label ${searchMode === "latest" ? "active" : ""}`}>
+          Latest
+        </span>
+        <label className="switch">
+          <input
+            className="toggle-input"
+            type="checkbox"
+            checked={searchMode === "original"}
+            onChange={toggleSearchMode}
+          />
+          <span className="slider round"></span>
+        </label>
+        <span className={`label ${searchMode === "original" ? "active" : ""}`}>
+          Original
+        </span>
+      </div>
+
+      {/* <div className="switch-labels">
+        <span className={searchMode === "latest" ? "active" : ""}>Latest</span>
+        <span className={searchMode === "original" ? "active" : ""}>
+          Original
+        </span>
+      </div> */}
     </div>
   );
 };

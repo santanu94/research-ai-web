@@ -21,6 +21,7 @@ const ChatComponent = ({ paperId, searchId }) => {
   const [newMessage, setNewMessage] = useState("");
   const [isPreprocessing, setIsPreprocessing] = useState(true);
   const [preprocessingError, setPreprocessingError] = useState(false);
+  const [samplePaperQuestions, setSamplePaperQuestions] = useState([]);
   const [socketioIsConnected, setSocketioIsConnected] = useState(
     socket.connected
   );
@@ -39,8 +40,10 @@ const ChatComponent = ({ paperId, searchId }) => {
         body: JSON.stringify({ paper_id: paperId }),
       }
     )
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 200) {
+          const responseJson = await response.json();
+          setSamplePaperQuestions(responseJson["paper_questions"]);
           socket.connect();
           setupSocketListeners();
           setIsPreprocessing(false);
@@ -225,6 +228,32 @@ const ChatComponent = ({ paperId, searchId }) => {
       });
   };
 
+  const parseModelResponse = (modelResponse) => {
+    // Function to parse and format bold text within a line
+    const parseBoldText = (text) => {
+      const regex = /\*\*(.*?)\*\*/g;
+      const parts = [];
+      let lastIdx = 0;
+      text.replace(regex, (match, p1, offset) => {
+        // Push text before the bold part
+        parts.push(text.substring(lastIdx, offset));
+        // Push the bold part, wrapped in a <strong> tag
+        parts.push(<strong key={offset}>{p1}</strong>);
+        // Update the last index to the end of the current match
+        lastIdx = offset + match.length;
+      });
+      // Add any remaining text after the last match
+      parts.push(text.substring(lastIdx));
+      return parts;
+    };
+    return modelResponse.split("\n").map((line, index) => (
+      <React.Fragment key={index}>
+        {parseBoldText(line)}
+        <br />
+      </React.Fragment>
+    ));
+  };
+
   return (
     <div className="chat-container">
       {/* Messages display */}
@@ -235,7 +264,9 @@ const ChatComponent = ({ paperId, searchId }) => {
               key={index}
               className={`d-flex flex-column message-box message-box-${msg.type}`}
             >
-              <div className={`message ${msg.type}`}>{msg.text}</div>
+              <div className={`message ${msg.type}`}>
+                {parseModelResponse(msg.text)}
+              </div>
               {msg.type === "assistant-message" && (
                 <div className="feedback-spacer">
                   <div className="feedback-icons">
@@ -301,54 +332,69 @@ const ChatComponent = ({ paperId, searchId }) => {
       </div>
 
       {/* Message input */}
-      <div className="input-group py-3 message-input-container">
-        <div class="form-floating">
-          <textarea
-            rows={1}
-            class="form-control w-100 message-input"
-            id="message-input"
-            placeholder="Leave a comment here"
-            value={newMessage}
-            disabled={isAssistantTyping || !socketioIsConnected}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onInput={handleInput}
-          ></textarea>
-          <label for="message-input">Type your question here...</label>
+      <div className="position-static bottom-0">
+        <div className="sample-questions-container">
+          <div className="sample-questions">
+            {samplePaperQuestions.map((question, index) => (
+              <button
+                key={index}
+                className="sample-question"
+                onClick={() => setNewMessage(question)} // Sets the question into the input field
+              >
+                {question}
+              </button>
+            ))}
+          </div>
         </div>
-        {/* <button
+        <div className="input-group py-3 message-input-container">
+          <div class="form-floating">
+            <textarea
+              rows={1}
+              class="form-control w-100 message-input"
+              id="message-input"
+              placeholder="Leave a comment here"
+              value={newMessage}
+              disabled={isAssistantTyping || !socketioIsConnected}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onInput={handleInput}
+            ></textarea>
+            <label for="message-input">Type your question here...</label>
+          </div>
+          {/* <button
           className="btn d-flex align-self-center"
           type="button"
           onClick={handleSendMessage}
         >
           <IoSend />
         </button> */}
-        {!socketioIsConnected ? (
-          <>
-            {socketioReconnecting ? (
-              <button className="btn d-flex align-self-center pe-none">
-                <div
-                  className="btn spinner spinner-grow align-self-center socketio-reconnect-indicator"
-                  role="status"
-                ></div>
-              </button>
-            ) : (
-              <button
-                className="btn d-flex align-self-center"
-                onClick={handleReconnectChat}
-              >
-                <IoReload />
-              </button>
-            )}
-          </>
-        ) : (
-          <button
-            className="btn d-flex align-self-center"
-            onClick={handleSendMessage}
-          >
-            <IoSend />
-          </button>
-        )}
+          {!socketioIsConnected ? (
+            <>
+              {socketioReconnecting ? (
+                <button className="btn d-flex align-self-center pe-none">
+                  <div
+                    className="btn spinner spinner-grow align-self-center socketio-reconnect-indicator"
+                    role="status"
+                  ></div>
+                </button>
+              ) : (
+                <button
+                  className="btn d-flex align-self-center"
+                  onClick={handleReconnectChat}
+                >
+                  <IoReload />
+                </button>
+              )}
+            </>
+          ) : (
+            <button
+              className="btn d-flex align-self-center"
+              onClick={handleSendMessage}
+            >
+              <IoSend />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
