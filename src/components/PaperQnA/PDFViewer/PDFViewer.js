@@ -69,7 +69,7 @@ const PDFViewer = ({ url }) => {
             }}
             disabled={pageNumber <= 1}
           >
-            <FaAngleDown className="button-icon" />
+            <FaAngleUp className="button-icon" />
           </button>
           <input
             {...register("page")}
@@ -97,7 +97,7 @@ const PDFViewer = ({ url }) => {
             }}
             disabled={numPages === undefined || pageNumber === numPages}
           >
-            <FaAngleUp className="button-icon" />
+            <FaAngleDown className="button-icon" />
           </button>
         </div>
         <div className="d-flex flex-grow-1"></div>

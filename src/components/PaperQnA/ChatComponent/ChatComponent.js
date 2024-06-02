@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import "./ChatComponent.css";
 import { IoSend, IoReload, IoThumbsUpOutline } from "react-icons/io5";
 import { MdErrorOutline } from "react-icons/md";
@@ -266,8 +269,12 @@ const ChatComponent = ({ paperId, searchId }) => {
               className={`d-flex flex-column message-box message-box-${msg.type}`}
             >
               <div className={`message ${msg.type}`}>
-                {/* {parseModelResponse(msg.text)} */}
-                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                >
+                  {msg.text}
+                </ReactMarkdown>
               </div>
               {msg.type === "assistant-message" && (
                 <div className="feedback-spacer">

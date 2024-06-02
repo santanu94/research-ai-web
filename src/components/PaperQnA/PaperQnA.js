@@ -39,7 +39,7 @@ const PaperQnA = () => {
   };
 
   return (
-    <div>
+    <div className="vh-100 overflow-hidden">
       <div>
         <div className="d-flex align-items-center back-to-dash">
           <button
