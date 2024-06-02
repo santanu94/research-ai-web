@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import "./ChatComponent.css";
 import { IoSend, IoReload, IoThumbsUpOutline } from "react-icons/io5";
 import { MdErrorOutline } from "react-icons/md";
@@ -148,8 +149,8 @@ const ChatComponent = ({ paperId, searchId }) => {
     );
   }
 
-  const handleSendMessage = async () => {
-    if (newMessage.trim() !== "") {
+  const handleSendMessage = async (message = newMessage) => {
+    if (message.trim() !== "") {
       // Send message to your API
       const conversationId = uuidv4();
 
@@ -165,7 +166,7 @@ const ChatComponent = ({ paperId, searchId }) => {
 
       // send message to server
       socket.emit("sendQuery", {
-        message: newMessage,
+        message: message.trim(),
         paper_id: paperId,
         conversation_id: conversationId,
         search_id: searchId,
@@ -175,7 +176,7 @@ const ChatComponent = ({ paperId, searchId }) => {
         ...messages,
         {
           type: "user-message",
-          text: newMessage,
+          text: message,
           conversationId: conversationId,
         },
       ]);
@@ -265,7 +266,8 @@ const ChatComponent = ({ paperId, searchId }) => {
               className={`d-flex flex-column message-box message-box-${msg.type}`}
             >
               <div className={`message ${msg.type}`}>
-                {parseModelResponse(msg.text)}
+                {/* {parseModelResponse(msg.text)} */}
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
               </div>
               {msg.type === "assistant-message" && (
                 <div className="feedback-spacer">
@@ -339,7 +341,7 @@ const ChatComponent = ({ paperId, searchId }) => {
               <button
                 key={index}
                 className="sample-question"
-                onClick={() => setNewMessage(question)} // Sets the question into the input field
+                onClick={() => handleSendMessage(question)} // Sets the question into the input field
               >
                 {question}
               </button>

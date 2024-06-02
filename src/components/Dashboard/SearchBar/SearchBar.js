@@ -6,11 +6,17 @@ import { v4 as uuidv4 } from "uuid";
 import posthog from "posthog-js";
 import mixpanel from "mixpanel-browser";
 
-const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+const SearchBar = ({
+  setSearchResults,
+  setSearchId,
+  setSearchQuery,
+  setSearchMode,
+  searchQuery,
+  searchMode,
+  additionalClassName,
+}) => {
   const [searchField, setSearchField] = useState("title");
   const [isFetchingPapers, setIsFetchingPapers] = useState(false);
-  const [searchMode, setSearchMode] = useState("latest");
   const quickSearchOptions = [
     "Llama 3",
     "xLSTM",
@@ -22,12 +28,12 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
 
   const handleQuickSearch = async (searchOption) => {
     mixpanel.track("Searched Paper with Quick Search");
-    setSearchTerm(searchOption);
+    setSearchQuery(searchOption);
     await performSearch(searchOption);
   };
 
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+    setSearchQuery(event.target.value);
   };
 
   const performSearch = async (searchQuery) => {
@@ -88,7 +94,7 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
 
   const handleSearchKeyPress = async (event) => {
     if (event.key === "Enter") {
-      performSearch(searchTerm);
+      performSearch(searchQuery);
     }
   };
 
@@ -96,6 +102,7 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
     setSearchMode((prevMode) =>
       prevMode === "latest" ? "original" : "latest"
     );
+    mixpanel.track("Changed Search Mode");
   };
 
   return (
@@ -118,12 +125,12 @@ const SearchBar = ({ setSearchResults, setSearchId, additionalClassName }) => {
           placeholder="Search research paper by name or topic."
           onChange={handleSearchChange}
           onKeyPress={handleSearchKeyPress}
-          value={searchTerm}
+          value={searchQuery}
           maxLength={255}
         />
         <div
           className="search-icon d-flex align-items-center flex-shrink-1"
-          onClick={() => performSearch(searchTerm)}
+          onClick={() => performSearch(searchQuery)}
         >
           {isFetchingPapers ? (
             <div className="spinner spinner-grow" role="status"></div>

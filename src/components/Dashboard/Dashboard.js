@@ -11,8 +11,16 @@ import mixpanel from "mixpanel-browser";
 
 const Dashboard = () => {
   const { user, isLoading } = useKindeAuth();
-  const { searchResults, setSearchResults, searchId, setSearchId } =
-    useSearch();
+  const {
+    searchResults,
+    setSearchResults,
+    searchId,
+    setSearchId,
+    searchQuery,
+    setSearchQuery,
+    searchMode,
+    setSearchMode,
+  } = useSearch();
   // const [searchId, setSearchId] = useState([]);
   // const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -42,6 +50,7 @@ const Dashboard = () => {
 
   const closeShowResults = () => {
     setShowSearchResults(false);
+    setSearchQuery("");
     posthog.capture("closed_search_results", { search_id: searchId });
     mixpanel.track("Closed Search Results", { search_id: searchId });
   };
@@ -76,6 +85,10 @@ const Dashboard = () => {
           <SearchBar
             setSearchResults={setSearchResults}
             setSearchId={setSearchId}
+            setSearchQuery={setSearchQuery}
+            setSearchMode={setSearchMode}
+            searchQuery={searchQuery}
+            searchMode={searchMode}
             additionalClassName={showSearchResults ? "raised" : ""}
           />
         </div>
