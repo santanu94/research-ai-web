@@ -1,0 +1,37 @@
+.latest-papers-container {
+    max-width: 85%;
+    margin: 40px 0;
+}
+
+.headline {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 2rem;
+}
+
+.latest-papers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+  
+.paper {
+    flex: 1 1 48%; /* Ensures that each card takes about half the width minus gap */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px 15px 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
+}
+  
+.paper:hover {
+    background-color: #f4f4f4;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+  

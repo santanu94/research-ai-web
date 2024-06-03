@@ -6,6 +6,7 @@ import { useSearch } from "../../context/SearchContext";
 import UserControlPanel from "../UserControlPanel/UserControlPanel";
 import SearchBar from "./SearchBar/SearchBar";
 import SearchResults from "./SearchResults/SearchResults";
+import LatestPapers from "./LatestPapers/LatestPapers";
 import posthog from "posthog-js";
 import mixpanel from "mixpanel-browser";
 
@@ -21,8 +22,6 @@ const Dashboard = () => {
     searchMode,
     setSearchMode,
   } = useSearch();
-  // const [searchId, setSearchId] = useState([]);
-  // const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   posthog.identify(user.given_name);
   mixpanel.identify();
@@ -51,6 +50,7 @@ const Dashboard = () => {
   const closeShowResults = () => {
     setShowSearchResults(false);
     setSearchQuery("");
+    setSearchResults([]);
     posthog.capture("closed_search_results", { search_id: searchId });
     mixpanel.track("Closed Search Results", { search_id: searchId });
   };
@@ -91,6 +91,7 @@ const Dashboard = () => {
             searchMode={searchMode}
             additionalClassName={showSearchResults ? "raised" : ""}
           />
+          <LatestPapers />
         </div>
         <div className="right-section d-flex flex-grow-1"></div>
         {showSearchResults && (

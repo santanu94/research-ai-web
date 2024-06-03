@@ -14,7 +14,7 @@ const PaperQnA = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { searchId } = useSearch();
-  var { pdfUrl } = location.state || {};
+  var { pdfUrl, referrer } = location.state || {};
 
   mixpanel.track_pageview({ page: "QnA Page" });
   console.log(searchId);
@@ -47,7 +47,11 @@ const PaperQnA = () => {
             onClick={backToDashboard}
           >
             <IoChevronBackOutline />
-            <span className="text">Back to Search Results</span>
+            <span className="text">
+              {referrer === "dashboard"
+                ? "Back to Dashboard"
+                : "Back to Search Results"}
+            </span>
           </button>{" "}
         </div>
       </div>
