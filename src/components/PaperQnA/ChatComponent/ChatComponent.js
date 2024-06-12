@@ -10,6 +10,7 @@ import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { LuThumbsUp, LuThumbsDown } from "react-icons/lu";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import ProgressBar from "react-bootstrap/ProgressBar";
 import posthog from "posthog-js";
 import mixpanel from "mixpanel-browser";
 
@@ -21,11 +22,22 @@ const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
 });
 
 const ChatComponent = ({ paperId, searchId }) => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      type: "assistant-message",
+      // text: "The block size for computation is set as ($ B_c = leftlfloor \frac{M}{4d} \right\rfloor $) and ( B_r = minleft(leftlfloor \frac{M}{4d} \right\rfloor, d\right) ).",
+      text: `The lift coefficient ($C_L$) is a dimensionless coefficient.`,
+      // text: `The algorithm described on page 5 is FlashAttention, which is designed to compute the attention mechanism in a memory-efficient and fast manner by leveraging on-chip SRAM and reducing the number of accesses to high bandwidth memory (HBM). Here is a step-by-step explanation of the algorithm: 1. **Initialization**: - Set block sizes for computation: ($B_c = left\lfloor frac{M}{4d} right\rfloor$) and \( B_r = \min\left(\left\lfloor \frac{M}{4d} \right\rfloor, d\right) \). - Initialize matrices \( O \), \( \ell \), and \( m \) in HBM. 2. **Divide Matrices into Blocks**: - Divide \( Q \) into \( T_r = \left\lceil \frac{N}{B_r} \right\rceil \) blocks \( Q_1, \ldots, Q_{T_r} \) of size \( B_r \times d \). - Divide \( K \) and \( V \) into \( T_c = \left\lceil \frac{N}{B_c} \right\rceil \) blocks \( K_1, \ldots, K_{T_c} \) and \( V_1, \ldots, V_{T_c} \) of size \( B_c \times d \). - Similarly, divide \( O \), \( \ell \), and \( m \) into \( T_r \) blocks. 3. **Main Computation Loop**: - For each block \( K_j \) and \( V_j \): - Load \( K_j \) and \( V_j \) from HBM to on-chip SRAM. - For each block \( Q_i \): - Load \( Q_i \), \( O_i \), \( \ell_i \), and \( m_i \) from HBM to on-chip SRAM. - Compute the intermediate matrix \( S_{ij} = Q_i K_j^T \) on-chip. - Compute row-wise maximum \( \tilde{m}_{ij} = \text{rowmax}(S_{ij}) \) and exponentiated matrix \( \tilde{P}_{ij} = \exp(S_{ij} - \tilde{m}_{ij}) \). - Compute row-wise sum \( \tilde{\ell}_{ij} = \text{rowsum}(\tilde{P}_{ij}) \). - Update \( m_i \) and \( \ell_i \) with new values \( m_{\text{new}} \) and \( \ell_{\text{new}} \). - Write the updated \( O_i \) back to HBM. - Write the updated \( \ell_i \) and \( m_i \) back to HBM. 4. **Return the Result**: - Return the final output matrix \( O \). Key Points: - The algorithm uses tiling to handle large matrices by breaking them into smaller blocks that fit into on-chip SRAM. - It keeps track of extra statistics (\( m \) and \( \ell \)) to compute the softmax in a block-wise manner. - The approach reduces the number of HBM accesses, making the computation more efficient. Source: Page 5 of the document.`,
+      conversationId: "123",
+    },
+  ]);
   const [newMessage, setNewMessage] = useState("");
   const [isPreprocessing, setIsPreprocessing] = useState(true);
   const [preprocessingError, setPreprocessingError] = useState(false);
+  const [preprocessingProgress, setPreprocessingProgress] = useState(0);
+  const [preprocessingTotal, setPreprocessingTotal] = useState(100);
   const [samplePaperQuestions, setSamplePaperQuestions] = useState([]);
+  const [processCompleted, setProcessCompleted] = useState(false);
   const [socketioIsConnected, setSocketioIsConnected] = useState(
     socket.connected
   );
@@ -34,41 +46,80 @@ const ChatComponent = ({ paperId, searchId }) => {
   let inactivityTimer;
 
   useEffect(() => {
-    fetch(
-      `${process.env.REACT_APP_CHAT_DOMAIN}${process.env.REACT_APP_PAPER_PREPROCESS_ENDPOINT}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ paper_id: paperId }),
-      }
-    )
-      .then(async (response) => {
-        if (response.status === 200) {
-          const responseJson = await response.json();
-          setSamplePaperQuestions(responseJson["paper_questions"]);
-          socket.connect();
-          setupSocketListeners();
-          setIsPreprocessing(false);
-        } else {
-          setIsPreprocessing(false);
-          setPreprocessingError(true);
-        }
-      })
-      .catch(() => {
+    socket.on("connect", () => {
+      console.log("Connected to perprocessing socket instance");
+      socket.emit("preprocess", { paper_id: paperId });
+      setIsPreprocessing(true);
+    });
+
+    socket.on("preprocessStatus", (data) => {
+      console.log("Preprocess Status:", data);
+      if (data.status === "complete") {
+        console.log("Preprocess completed successfully");
+        setProcessCompleted(true);
+        // socket.off("preprocessStatus");
+        socket.off("connect");
+        socket.off("disconnect");
+        socket.off("preprocessStatus");
+        socket.disconnect();
+        // socket.off("preprocessStatus");
+        // setIsPreprocessing(false);
+        setPreprocessingProgress(data.progress);
+        setPreprocessingTotal(data.total);
+      } else if (data.progress) {
+        setPreprocessingProgress(data.progress);
+        setPreprocessingTotal(data.total);
+      } else if (data.status === "error") {
         setIsPreprocessing(false);
         setPreprocessingError(true);
-      });
+      }
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from perprocessing socket instance");
+      setIsPreprocessing(false);
+    });
+
+    socket.connect();
 
     return () => {
       socket.off("connect");
       socket.off("disconnect");
-      socket.off("receiveQueryResponse");
+      socket.off("preprocessStatus");
       socket.disconnect();
-      clearTimeout(inactivityTimer);
     };
-  }, []);
+  }, [paperId]);
+
+  useEffect(() => {
+    if (processCompleted) {
+      fetch(
+        `${process.env.REACT_APP_CHAT_DOMAIN}${process.env.REACT_APP_PAPER_SAMPLE_QUESTIONS_ENDPOINT}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ paper_id: paperId }),
+        }
+      )
+        .then(async (response) => {
+          if (response.status === 200) {
+            const responseJson = await response.json();
+            setSamplePaperQuestions(responseJson["paper_questions"]);
+            setupSocketListeners();
+            socket.connect();
+            setIsPreprocessing(false);
+          } else {
+            setIsPreprocessing(false);
+            setPreprocessingError(true);
+          }
+        })
+        .catch(() => {
+          setIsPreprocessing(false);
+          setPreprocessingError(true);
+        });
+    }
+  }, [processCompleted]);
 
   const resetInactivityTimer = () => {
     clearTimeout(inactivityTimer);
@@ -137,6 +188,13 @@ const ChatComponent = ({ paperId, searchId }) => {
         ></div>
         <div className="loading-text">Loading...</div>
         <div className="fw-lighter desc-text">We're processing the paper</div>
+        <ProgressBar now={(preprocessingProgress / preprocessingTotal) * 100} />
+        <div className="">
+          {Math.floor((preprocessingProgress / preprocessingTotal) * 100)} %
+        </div>
+        <div>
+          {preprocessingProgress} / {preprocessingTotal}
+        </div>
       </div>
     );
   }
