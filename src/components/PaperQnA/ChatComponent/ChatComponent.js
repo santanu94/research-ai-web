@@ -8,7 +8,7 @@ import { IoSend, IoReload, IoThumbsUpOutline } from "react-icons/io5";
 import { MdErrorOutline } from "react-icons/md";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { LuThumbsUp, LuThumbsDown } from "react-icons/lu";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import posthog from "posthog-js";
