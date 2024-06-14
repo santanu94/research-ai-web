@@ -66,18 +66,19 @@ const ChatComponent = ({ paperId, searchId }) => {
         // setIsPreprocessing(false);
         setPreprocessingProgress(data.progress);
         setPreprocessingTotal(data.total);
-      } else if (data.progress) {
-        setPreprocessingProgress(data.progress);
-        setPreprocessingTotal(data.total);
       } else if (data.status === "error") {
         setIsPreprocessing(false);
         setPreprocessingError(true);
+      } else if (data.progress) {
+        setPreprocessingProgress(data.progress);
+        setPreprocessingTotal(data.total);
       }
     });
 
     socket.on("disconnect", () => {
       console.log("Disconnected from perprocessing socket instance");
       setIsPreprocessing(false);
+      socket.disconnect();
     });
 
     socket.connect();
@@ -182,19 +183,28 @@ const ChatComponent = ({ paperId, searchId }) => {
   if (isPreprocessing) {
     return (
       <div class="d-flex h-100 justify-content-center align-items-center flex-column">
-        <div
+        {/* <div
           className="spinner spinner-grow spinner-dimension"
           role="status"
-        ></div>
+        ></div> */}
         <div className="loading-text">Loading...</div>
-        <div className="fw-lighter desc-text">We're processing the paper</div>
-        <ProgressBar now={(preprocessingProgress / preprocessingTotal) * 100} />
-        <div className="">
+        {/* <div className="fw-lighter desc-text">We're processing the paper</div> */}
+
+        <div className="progress-container">
+          <ProgressBar
+            now={Math.floor((preprocessingProgress / preprocessingTotal) * 100)}
+            active="true"
+          />
+        </div>
+        <div className="fw-lighter desc-text">
+          (Papers with more pages can take longer)
+        </div>
+        {/* <div className="">
           {Math.floor((preprocessingProgress / preprocessingTotal) * 100)} %
         </div>
         <div>
           {preprocessingProgress} / {preprocessingTotal}
-        </div>
+        </div> */}
       </div>
     );
   }
