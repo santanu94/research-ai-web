@@ -99,9 +99,7 @@ const SearchBar = ({
   };
 
   const toggleSearchMode = () => {
-    setSearchMode((prevMode) =>
-      prevMode === "latest" ? "original" : "latest"
-    );
+    setSearchMode((prevMode) => (prevMode === "latest" ? "scholar" : "latest"));
     mixpanel.track("Changed Search Mode");
   };
 
@@ -122,7 +120,7 @@ const SearchBar = ({
           className="search-bar"
           type="text"
           // placeholder="Search research papers, authors or conferences"
-          placeholder="Search research paper by name or topic."
+          placeholder="Search latest research papers by name or topic."
           onChange={handleSearchChange}
           onKeyPress={handleSearchKeyPress}
           value={searchQuery}
@@ -152,7 +150,7 @@ const SearchBar = ({
         ))}
       </div>
 
-      <div className="toggle-switch">
+      {/* <div className="toggle-switch">
         <span className={`label ${searchMode === "latest" ? "active" : ""}`}>
           Latest
         </span>
@@ -167,6 +165,24 @@ const SearchBar = ({
         </label>
         <span className={`label ${searchMode === "original" ? "active" : ""}`}>
           Original
+        </span>
+      </div> */}
+      <div className="toggle-switch">
+        <span className={`label ${searchMode === "latest" ? "active" : ""}`}>
+          Latest
+        </span>
+        <label className="switch">
+          <input
+            className="toggle-input"
+            type="checkbox"
+            checked={searchMode === "scholar"}
+            latest
+            onChange={toggleSearchMode}
+          />
+          <span className="slider round"></span>
+        </label>
+        <span className={`label ${searchMode === "scholar" ? "active" : ""}`}>
+          Scholar
         </span>
       </div>
 

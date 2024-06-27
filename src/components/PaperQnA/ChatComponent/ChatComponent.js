@@ -21,7 +21,13 @@ const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
   reconnectionAttempts: 5,
 });
 
-const ChatComponent = ({ paperId, searchId }) => {
+const ChatComponent = ({
+  paperId,
+  paperTitle,
+  paperPublishedDate,
+  paperUrl,
+  searchId,
+}) => {
   // const [messages, setMessages] = useState([
   //   {
   //     type: "assistant-message",
@@ -49,7 +55,12 @@ const ChatComponent = ({ paperId, searchId }) => {
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to perprocessing socket instance");
-      socket.emit("preprocess", { paper_id: paperId });
+      socket.emit("preprocess", {
+        paper_id: paperId,
+        paper_title: paperTitle,
+        paper_published_date: paperPublishedDate,
+        paper_url: paperUrl,
+      });
       setIsPreprocessing(true);
     });
 

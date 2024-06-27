@@ -9,12 +9,19 @@ const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
   const navigate = useNavigate();
   mixpanel.track_pageview({ page: "Searched Papers" });
 
-  const handleResultClick = (id, pdfUrl) => {
+  const handleResultClick = (id, paperTitle, paperPublishedDate, pdfUrl) => {
     posthog.capture("open_paper", { paper_id: id, search_id: searchId });
     // mixpanel.track_links("#paper-result", "Clicked to Open Paper");
     mixpanel.track("Clicked to Open Paper");
 
-    navigate(`/paper/${id}`, { state: { pdfUrl, referrer: "searchResults" } });
+    navigate(`/paper/${id}`, {
+      state: {
+        paperTitle,
+        paperPublishedDate,
+        pdfUrl,
+        referrer: "searchResults",
+      },
+    });
   };
   return (
     <div className={`search-results-overlay ${additionalClassName}`}>
@@ -28,7 +35,14 @@ const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
               id="paper-result"
               key={index}
               className="result-item"
-              onClick={() => handleResultClick(result.id, result.url)}
+              onClick={() =>
+                handleResultClick(
+                  result.id,
+                  result.title,
+                  result.published,
+                  result.url
+                )
+              }
             >
               <div className="result-title">{result.title}</div>
               <div className="result-author">{result.authors}</div>

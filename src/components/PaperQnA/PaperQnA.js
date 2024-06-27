@@ -14,7 +14,8 @@ const PaperQnA = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { searchId } = useSearch();
-  var { pdfUrl, referrer } = location.state || {};
+  var { paperTitle, paperPublishedDate, pdfUrl, referrer } =
+    location.state || {};
 
   mixpanel.track_pageview({ page: "QnA Page" });
   console.log(searchId);
@@ -26,8 +27,11 @@ const PaperQnA = () => {
   // pdfUrl = !pdfUrl.endsWith(".pdf") ? `${pdfUrl}.pdf` : pdfUrl;
   // pdfUrl = pdfUrl.endsWith(".pdf") ? pdfUrl.slice(0, -4) : pdfUrl;
   // const paper_id = pdfUrl.split("/").pop();
-  pdfUrl = `https://arxiv.org/pdf/${id}`;
-  // const pdfUrl = `https://arxiv.org/pdf/${id}.pdf`;
+  if (pdfUrl.includes("arxiv.org")) pdfUrl = `https://arxiv.org/pdf/${id}`;
+  else
+    pdfUrl = `${
+      process.env.REACT_APP_CHAT_DOMAIN
+    }/api/v1/fetch-pdf/?url=${encodeURIComponent(pdfUrl)}`;
 
   const backToDashboard = () => {
     posthog.capture("clicked_back_to_search_results_from_chat", {
@@ -60,7 +64,13 @@ const PaperQnA = () => {
           <PDFViewer url={pdfUrl} />
         </div>
         <div className="chatroom">
-          <ChatComponent paperId={id} searchId={searchId} />
+          <ChatComponent
+            paperId={id}
+            paperTitle={paperTitle}
+            paperPublishedDate={paperPublishedDate}
+            paperUrl={pdfUrl}
+            searchId={searchId}
+          />
         </div>
       </div>
     </div>
