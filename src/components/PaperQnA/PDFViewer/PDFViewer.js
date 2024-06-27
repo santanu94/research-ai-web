@@ -22,9 +22,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 //   import.meta.url
 // ).toString();
 
-const PDFViewer = ({ url }) => {
+const PDFViewer = ({ url, pageNumber, setPageNumber }) => {
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1.0);
   const [pdfRotation, setPdfRotation] = useState(0);
   const { width, ref } = useResizeDetector();

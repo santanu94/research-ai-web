@@ -1,5 +1,5 @@
 // PaperComponent.js
-import React from "react";
+import React, { useState } from "react";
 import "./PaperQnA.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useSearch } from "../../context/SearchContext";
@@ -14,6 +14,7 @@ const PaperQnA = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { searchId } = useSearch();
+  const [pageNumber, setPageNumber] = useState(1);
   var { paperTitle, paperPublishedDate, pdfUrl, referrer } =
     location.state || {};
 
@@ -61,7 +62,11 @@ const PaperQnA = () => {
       </div>
       <div className="paper-layout">
         <div className="pdf-view">
-          <PDFViewer url={pdfUrl} />
+          <PDFViewer
+            url={pdfUrl}
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+          />
         </div>
         <div className="chatroom">
           <ChatComponent
@@ -69,6 +74,7 @@ const PaperQnA = () => {
             paperTitle={paperTitle}
             paperPublishedDate={paperPublishedDate}
             paperUrl={pdfUrl}
+            pageNumber={pageNumber}
             searchId={searchId}
           />
         </div>

@@ -26,6 +26,7 @@ const ChatComponent = ({
   paperTitle,
   paperPublishedDate,
   paperUrl,
+  pageNumber,
   searchId,
 }) => {
   // const [messages, setMessages] = useState([
@@ -250,6 +251,7 @@ const ChatComponent = ({
       // send message to server
       socket.emit("sendQuery", {
         message: message.trim(),
+        current_page_number: pageNumber,
         paper_id: paperId,
         conversation_id: conversationId,
         search_id: searchId,
