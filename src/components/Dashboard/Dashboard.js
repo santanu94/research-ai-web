@@ -23,6 +23,9 @@ const Dashboard = () => {
     setSearchMode,
   } = useSearch();
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isFetchingPapers, setIsFetchingPapers] = useState(false);
+  const [searchFailed, setSearchFailed] = useState(false);
+
   posthog.identify(user.given_name);
   mixpanel.identify();
   mixpanel.track_pageview({ page: "Dashboard Page" });
@@ -34,6 +37,14 @@ const Dashboard = () => {
       setShowSearchResults(true);
     }
   }, [searchResults]);
+
+  useEffect(() => {
+    console.log(searchFailed);
+    if (searchFailed && searchResults.length == 0) setShowSearchResults(true);
+    // if (setSearchFailed !== null) {
+    //   setShowSearchResults(true);
+    // }
+  }, [searchResults, searchFailed]);
 
   const getGreetingBasedOnTime = () => {
     const currentHour = new Date().getHours();
@@ -51,6 +62,7 @@ const Dashboard = () => {
     setShowSearchResults(false);
     setSearchQuery("");
     setSearchResults([]);
+    setSearchFailed(false);
     posthog.capture("closed_search_results", { search_id: searchId });
     mixpanel.track("Closed Search Results", { search_id: searchId });
   };
@@ -89,6 +101,9 @@ const Dashboard = () => {
             setSearchMode={setSearchMode}
             searchQuery={searchQuery}
             searchMode={searchMode}
+            setIsFetchingPapers={setIsFetchingPapers}
+            isFetchingPapers={isFetchingPapers}
+            setSearchFailed={setSearchFailed}
             additionalClassName={showSearchResults ? "raised" : ""}
           />
           <LatestPapers />
@@ -96,6 +111,8 @@ const Dashboard = () => {
         <div className="right-section d-flex flex-grow-1"></div>
         {showSearchResults && (
           <SearchResults
+            isFetchingPapers={isFetchingPapers}
+            searchFailed={searchFailed}
             results={searchResults}
             searchId={searchId}
             onClose={closeShowResults}

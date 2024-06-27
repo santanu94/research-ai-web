@@ -5,7 +5,14 @@ import { IoClose } from "react-icons/io5";
 import posthog from "posthog-js";
 import mixpanel from "mixpanel-browser";
 
-const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
+const SearchResults = ({
+  isFetchingPapers,
+  searchFailed,
+  results,
+  searchId,
+  onClose,
+  additionalClassName,
+}) => {
   const navigate = useNavigate();
   mixpanel.track_pageview({ page: "Searched Papers" });
 
@@ -29,40 +36,54 @@ const SearchResults = ({ results, searchId, onClose, additionalClassName }) => {
         <IoClose onClick={onClose} className="close-btn" />
         <span className="search-headline">Research papers</span>
         <div className="underline"></div>
-        <div className="result-display-area">
-          {results.map((result, index) => (
-            <div
-              id="paper-result"
-              key={index}
-              className="result-item"
-              onClick={() =>
-                handleResultClick(
-                  result.id,
-                  result.title,
-                  result.published,
-                  result.url
-                )
-              }
-            >
-              <div className="result-title">{result.title}</div>
-              <div className="result-author">{result.authors}</div>
-              <div className="result-author">
+        {results.length > 0 ? (
+          <div className="result-display-area">
+            {results.map((result, index) => (
+              <div
+                id="paper-result"
+                key={index}
+                // className="result-item"
+                className={`result-item ${
+                  result.url === "" || isFetchingPapers ? "disabled" : ""
+                }`}
+                onClick={() =>
+                  handleResultClick(
+                    result.id,
+                    result.title,
+                    result.published,
+                    result.url
+                  )
+                }
+              >
+                <div className="result-title">{result.title}</div>
+                <div className="result-author">{result.authors}</div>
+                {result.published && (
+                  <div className="result-author">
+                    Published on - {result.published}
+                  </div>
+                )}
+                {/* <div className="result-author">
                 Published on - {result.published}
+              </div> */}
+                <div className="result-topics">
+                  {result.topics &&
+                    result.topics.split(",").map(
+                      (topic, index) =>
+                        topic.trim() && (
+                          <span key={index} className="topic-tag">
+                            {topic.trim()}
+                          </span>
+                        )
+                    )}
+                </div>
               </div>
-              <div className="result-topics">
-                {result.topics &&
-                  result.topics.split(",").map(
-                    (topic, index) =>
-                      topic.trim() && (
-                        <span key={index} className="topic-tag">
-                          {topic.trim()}
-                        </span>
-                      )
-                  )}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : searchFailed ? (
+          <div className="d-flex align-items-center justify-content-center flex-column vh-50">
+            <div className="error-text">Unexpected error occurred.</div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

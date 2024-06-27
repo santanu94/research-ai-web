@@ -56,6 +56,12 @@
   background-color: var(--white);
 }
 
+.result-item.disabled {
+  opacity: 0.4; /* Makes the entry appear faded */
+  pointer-events: none; /* Prevents clicking on the item */
+  cursor: not-allowed; /* Shows a not-allowed cursor on hover */
+}
+
 .result-title {
   font-weight: 700;
   font-size: 20px;
@@ -63,7 +69,7 @@
 
 .result-author {
   font-size: 14px;
-  color: var(--light-grey);
+  color: var(--light-grey-text);
 }
 
 .result-topics {

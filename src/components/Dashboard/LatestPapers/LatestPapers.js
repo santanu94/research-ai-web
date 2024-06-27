@@ -14,6 +14,12 @@ const LatestPapers = () => {
   const fetchLatestPapers = async () => {
     const fetchedPapers = [
       {
+        title: "Scalable MatMul-free Language Modeling",
+        id: "2406.02528v5",
+        published: "06/18/2024",
+        url: "https://arxiv.org/abs/2406.02528",
+      },
+      {
         title: "MoRA: High-Rank Updating for Parameter-Efficient Fine-Tuning",
         id: "2405.12130v1",
         published: "05/20/2024",
@@ -44,12 +50,6 @@ const LatestPapers = () => {
         id: "2405.07992v3",
         published: "05/20/2024",
         url: "https://arxiv.org/abs/2405.07992",
-      },
-      {
-        title: "How Far Are We From AGI",
-        id: "2405.10313v1",
-        published: "05/16/2024",
-        url: "https://arxiv.org/abs/2405.10313",
       },
     ];
     setLatestPapers(fetchedPapers);

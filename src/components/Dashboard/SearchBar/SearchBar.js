@@ -13,10 +13,12 @@ const SearchBar = ({
   setSearchMode,
   searchQuery,
   searchMode,
+  setIsFetchingPapers,
+  isFetchingPapers,
+  setSearchFailed,
   additionalClassName,
 }) => {
   const [searchField, setSearchField] = useState("title");
-  const [isFetchingPapers, setIsFetchingPapers] = useState(false);
   const quickSearchOptions = [
     "Llama 3",
     "xLSTM",
@@ -28,8 +30,9 @@ const SearchBar = ({
 
   const handleQuickSearch = async (searchOption) => {
     mixpanel.track("Searched Paper with Quick Search");
-    setSearchQuery(searchOption);
-    await performSearch(searchOption);
+    const quickSearchTerm = `Latest papers on ${searchOption}`;
+    setSearchQuery(quickSearchTerm);
+    await performSearch(quickSearchTerm);
   };
 
   const handleSearchChange = (event) => {
@@ -84,9 +87,13 @@ const SearchBar = ({
         .catch((error) => {
           // Handle network error
           console.error("Network error:", error);
+          setSearchResults([]);
+          setSearchFailed(true);
         });
     } catch (error) {
       console.error("Search error:", error); // Handle search error
+      setSearchResults([]);
+      setSearchFailed(true);
     } finally {
       setIsFetchingPapers(false);
     }
