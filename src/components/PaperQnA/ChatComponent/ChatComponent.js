@@ -29,15 +29,6 @@ const ChatComponent = ({
   pageNumber,
   searchId,
 }) => {
-  // const [messages, setMessages] = useState([
-  //   {
-  //     type: "assistant-message",
-  //     // text: "The block size for computation is set as ($ B_c = leftlfloor \frac{M}{4d} \right\rfloor $) and ( B_r = minleft(leftlfloor \frac{M}{4d} \right\rfloor, d\right) ).",
-  //     text: `The lift coefficient ($C_L$) is a dimensionless coefficient.`,
-  //     // text: `The algorithm described on page 5 is FlashAttention, which is designed to compute the attention mechanism in a memory-efficient and fast manner by leveraging on-chip SRAM and reducing the number of accesses to high bandwidth memory (HBM). Here is a step-by-step explanation of the algorithm: 1. **Initialization**: - Set block sizes for computation: ($B_c = left\lfloor frac{M}{4d} right\rfloor$) and \( B_r = \min\left(\left\lfloor \frac{M}{4d} \right\rfloor, d\right) \). - Initialize matrices \( O \), \( \ell \), and \( m \) in HBM. 2. **Divide Matrices into Blocks**: - Divide \( Q \) into \( T_r = \left\lceil \frac{N}{B_r} \right\rceil \) blocks \( Q_1, \ldots, Q_{T_r} \) of size \( B_r \times d \). - Divide \( K \) and \( V \) into \( T_c = \left\lceil \frac{N}{B_c} \right\rceil \) blocks \( K_1, \ldots, K_{T_c} \) and \( V_1, \ldots, V_{T_c} \) of size \( B_c \times d \). - Similarly, divide \( O \), \( \ell \), and \( m \) into \( T_r \) blocks. 3. **Main Computation Loop**: - For each block \( K_j \) and \( V_j \): - Load \( K_j \) and \( V_j \) from HBM to on-chip SRAM. - For each block \( Q_i \): - Load \( Q_i \), \( O_i \), \( \ell_i \), and \( m_i \) from HBM to on-chip SRAM. - Compute the intermediate matrix \( S_{ij} = Q_i K_j^T \) on-chip. - Compute row-wise maximum \( \tilde{m}_{ij} = \text{rowmax}(S_{ij}) \) and exponentiated matrix \( \tilde{P}_{ij} = \exp(S_{ij} - \tilde{m}_{ij}) \). - Compute row-wise sum \( \tilde{\ell}_{ij} = \text{rowsum}(\tilde{P}_{ij}) \). - Update \( m_i \) and \( \ell_i \) with new values \( m_{\text{new}} \) and \( \ell_{\text{new}} \). - Write the updated \( O_i \) back to HBM. - Write the updated \( \ell_i \) and \( m_i \) back to HBM. 4. **Return the Result**: - Return the final output matrix \( O \). Key Points: - The algorithm uses tiling to handle large matrices by breaking them into smaller blocks that fit into on-chip SRAM. - It keeps track of extra statistics (\( m \) and \( \ell \)) to compute the softmax in a block-wise manner. - The approach reduces the number of HBM accesses, making the computation more efficient. Source: Page 5 of the document.`,
-  //     conversationId: "123",
-  //   },
-  // ]);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isPreprocessing, setIsPreprocessing] = useState(true);
@@ -314,30 +305,57 @@ const ChatComponent = ({
       });
   };
 
-  const parseModelResponse = (modelResponse) => {
-    // Function to parse and format bold text within a line
-    const parseBoldText = (text) => {
-      const regex = /\*\*(.*?)\*\*/g;
-      const parts = [];
-      let lastIdx = 0;
-      text.replace(regex, (match, p1, offset) => {
-        // Push text before the bold part
-        parts.push(text.substring(lastIdx, offset));
-        // Push the bold part, wrapped in a <strong> tag
-        parts.push(<strong key={offset}>{p1}</strong>);
-        // Update the last index to the end of the current match
-        lastIdx = offset + match.length;
-      });
-      // Add any remaining text after the last match
-      parts.push(text.substring(lastIdx));
-      return parts;
-    };
-    return modelResponse.split("\n").map((line, index) => (
-      <React.Fragment key={index}>
-        {parseBoldText(line)}
-        <br />
-      </React.Fragment>
-    ));
+  // const parseModelResponse = (modelResponse) => {
+  //   // Function to parse and format bold text within a line
+  //   const parseBoldText = (text) => {
+  //     const regex = /\*\*(.*?)\*\*/g;
+  //     const parts = [];
+  //     let lastIdx = 0;
+  //     text.replace(regex, (match, p1, offset) => {
+  //       // Push text before the bold part
+  //       parts.push(text.substring(lastIdx, offset));
+  //       // Push the bold part, wrapped in a <strong> tag
+  //       parts.push(<strong key={offset}>{p1}</strong>);
+  //       // Update the last index to the end of the current match
+  //       lastIdx = offset + match.length;
+  //     });
+  //     // Add any remaining text after the last match
+  //     parts.push(text.substring(lastIdx));
+  //     return parts;
+  //   };
+  //   return modelResponse.split("\n").map((line, index) => (
+  //     <React.Fragment key={index}>
+  //       {parseBoldText(line)}
+  //       <br />
+  //     </React.Fragment>
+  //   ));
+  // };
+
+  // const prepareForLatex = (content) => {
+  //   // const latexCommandRegex = /(?<!\\)\\([a-zA-Z]+)/g;
+  //   const latexCommandRegex = /(?<!\\)(\\([a-zA-Z]+|\(|\)|\[|\]))/g;
+  //   return content.replace(latexCommandRegex, "\\\\$1");
+  // };
+
+  const preprocessLaTeX = (content) => {
+    // const latexCommandRegex = /(?<!\\)\\([a-zA-Z]+)/g;
+
+    // // This will replace single backslashes in LaTeX commands with double backslashes.
+    // content = content.replace(latexCommandRegex, "\\\\$1");
+    // console.log(content);
+
+    // Replace block-level LaTeX delimiters \[ \] with $$ $$
+
+    const blockProcessedContent = content.replace(
+      /\\\[(.*?)\\\]/gs,
+      (_, equation) => `$$${equation}$$`
+    );
+    // Replace inline LaTeX delimiters \( \) with $ $
+    const inlineProcessedContent = blockProcessedContent.replace(
+      /\\\((.*?)\\\)/gs,
+      (_, equation) => `$${equation}$`
+    );
+    return inlineProcessedContent;
   };
 
   return (
@@ -355,7 +373,7 @@ const ChatComponent = ({
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}
                 >
-                  {msg.text}
+                  {preprocessLaTeX(msg.text)}
                 </ReactMarkdown>
               </div>
               {msg.type === "assistant-message" && (
