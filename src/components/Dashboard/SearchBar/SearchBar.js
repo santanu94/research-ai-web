@@ -21,11 +21,11 @@ const SearchBar = ({
   const [searchField, setSearchField] = useState("title");
   const quickSearchOptions = [
     "Llama 3",
-    "xLSTM",
     "RAG",
-    "Chain of Thoughts",
-    "Tree of Thoughts",
     "LLM Planning",
+    "Depth Estimation",
+    "Text-to-Image",
+    "Multimodal Models",
   ];
 
   const handleQuickSearch = async (searchOption) => {
