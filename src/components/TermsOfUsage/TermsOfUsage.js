@@ -85,8 +85,8 @@ const TermsOfUsage = () => {
           </p>
           <p>
             <b>Contact Information:</b> If you have any questions or concerns
-            about these terms of usage, please contact us at [Your Contact
-            Information].
+            about these terms of usage, please contact us at{" "}
+            <u>support@theresearchai.in</u>.
           </p>
         </div>
         {/* Add more content here as needed */}

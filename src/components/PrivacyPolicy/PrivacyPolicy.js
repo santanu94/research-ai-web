@@ -9,24 +9,24 @@ const PrivacyPolicy = () => {
       <div className="privacy-policy-container">
         <div className="privacy-policy-heading">Privacy Policy</div>
         <div className="tou-content">
-          At [Your SaaS Application Name], we are committed to protecting the
-          privacy and security of our users' personal information. This privacy
-          policy outlines how we collect, use, share, and protect the
-          information collected from users when they use our service. By using
-          our service, you consent to the collection and use of your information
-          as described in this policy.
+          At The Research AI, we are committed to protecting the privacy and
+          security of our users' personal information. This privacy policy
+          outlines how we collect, use, share, and protect the information
+          collected from users when they use our service. By using our service,
+          you consent to the collection and use of your information as described
+          in this policy.
           <p>
             <b>Information Collected:</b> We collect the following types of
             information from users: Name Email address Search queries Questions
             asked during interactive question and answer sessions Answers
             provided during interactive question and answer sessions
             Additionally, please note that when users authenticate through our
-            third-party authentication service, [Name of Third-Party Service],
-            they may also collect certain information during the login process.
-            We encourage users to review the privacy policy of [Name of
-            Third-Party Service] for more information about their data
-            collection practices. This information is collected directly from
-            users when they interact with our service.
+            third-party authentication service, Kinde authenticator, they may
+            also collect certain information during the login process. We
+            encourage users to review the privacy policy of Kinde authenticator
+            for more information about their data collection practices. This
+            information is collected directly from users when they interact with
+            our service.
           </p>
           <p>
             <b>Use of Information:</b> The personal information collected,
@@ -62,9 +62,9 @@ const PrivacyPolicy = () => {
             queries, questions asked, and answers received during interactive
             question and answer sessions are considered the property of the
             company and cannot be removed upon user request. To request the
-            removal of personal information, users may email us at [Your Contact
-            Email Address]. We will make reasonable efforts to fulfill such
-            requests in a timely manner.
+            removal of personal information, users may email us at{" "}
+            <u>support@theresearchai.in</u>. We will make reasonable efforts to
+            fulfill such requests in a timely manner.
           </p>
           <p>
             <b>Cookies and Tracking Technologies:</b> We use cookies to enhance
@@ -88,7 +88,7 @@ const PrivacyPolicy = () => {
           <p>
             <b>Contact Information:</b> If you have any questions or concerns
             about our privacy policy, please feel free to contact us via email
-            at [Your Contact Email Address].
+            at <u>support@theresearchai.in</u>.
           </p>
         </div>
       </div>
