@@ -111,7 +111,9 @@ const LandingPage = () => {
           <div className="d-flex flex-row divider-icon-pair">
             <div className="d-flex flex-row align-self-center ml-auto divider" />
             <div className="align-self-center icons">
-              <FaXTwitter className="icon" />
+              <Link className="link-dark" to="https://x.com/the_research_ai">
+                <FaXTwitter className="icon" />
+              </Link>
               <FaLinkedinIn className="icon" />
             </div>
             <div className="align-self-center mr-auto divider" />
