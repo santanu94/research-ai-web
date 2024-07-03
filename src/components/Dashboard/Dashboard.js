@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isFetchingPapers, setIsFetchingPapers] = useState(false);
   const [searchFailed, setSearchFailed] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   posthog.identify(user.given_name);
   mixpanel.identify();
@@ -104,6 +105,7 @@ const Dashboard = () => {
             setIsFetchingPapers={setIsFetchingPapers}
             isFetchingPapers={isFetchingPapers}
             setSearchFailed={setSearchFailed}
+            setCurrentPage={setCurrentPage}
             additionalClassName={showSearchResults ? "raised" : ""}
           />
           <LatestPapers />
@@ -116,6 +118,8 @@ const Dashboard = () => {
             results={searchResults}
             searchId={searchId}
             onClose={closeShowResults}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
             additionalClassName="active"
           />
         )}

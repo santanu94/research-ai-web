@@ -88,3 +88,22 @@
   font-size: 0.8rem; /* Smaller font size for tags */
   color: var(--search-topic-text);
 }
+
+.pagination {
+  margin-top: 2rem;
+  margin-bottom: 0;
+}
+
+.page-link {
+  color: var(--primary-color);
+}
+
+.page-link:focus {
+  box-shadow: none;
+  background-color: var(--white);
+}
+
+.pagination .active > .page-link{
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}

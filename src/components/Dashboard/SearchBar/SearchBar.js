@@ -16,6 +16,7 @@ const SearchBar = ({
   setIsFetchingPapers,
   isFetchingPapers,
   setSearchFailed,
+  setCurrentPage,
   additionalClassName,
 }) => {
   const [searchField, setSearchField] = useState("title");
@@ -82,6 +83,7 @@ const SearchBar = ({
             search_results = data["result"];
             setSearchId(searchId);
             setSearchResults(search_results);
+            setCurrentPage(1);
           }
         })
         .catch((error) => {
