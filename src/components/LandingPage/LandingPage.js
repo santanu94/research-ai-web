@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./LandingPage.css";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
@@ -6,14 +6,31 @@ import posthog from "posthog-js";
 import { FaXTwitter, FaLinkedinIn } from "react-icons/fa6";
 import mixpanel from "mixpanel-browser";
 import Navbar from "../Navbar/Navbar";
+import MobileWarningModal from "./MobileWarningModal/MobileWarningModal";
 import heroImage from "../../assets/images/landing-page-preview.png";
 import SearchPreviewImage from "../../assets/images/search-preview.png";
 import ChatPreviewImage from "../../assets/images/chat-preview.png";
 
 const LandingPage = () => {
+  const [isSmallScreenDevice, setIsSmallScreenDevice] = useState(false);
+  const [
+    showDeviceIncompatibilityMessage,
+    setShowDeviceIncompatibilityMessage,
+  ] = useState(false);
   const { register } = useKindeAuth();
   const ref = useRef(null);
   mixpanel.track_pageview({ page: "Landing Page" });
+
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreenDevice(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", checkScreenSize);
+    checkScreenSize();
+
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
   const handleExploreButtonClick = () => {
     mixpanel.track("Clicked Explore Button");
@@ -25,11 +42,21 @@ const LandingPage = () => {
     posthog.capture("get_started_button_clicked", { page: "landing page" });
     mixpanel.track("Clicked Get Started Button");
     // mixpanel.track_links("#get-started-btn", "Clicked Get Started Button");
-    register();
+
+    if (isSmallScreenDevice) {
+      setShowDeviceIncompatibilityMessage(true);
+    } else {
+      register();
+    }
   };
 
   return (
     <>
+      {showDeviceIncompatibilityMessage && (
+        <MobileWarningModal
+          setDisplayModal={setShowDeviceIncompatibilityMessage}
+        />
+      )}
       <Navbar />
       <div className="landing-page">
         <div className="d-flex hero-section">
