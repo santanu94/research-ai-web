@@ -79,6 +79,13 @@
   margin-top: 10px;
 }
 
+.pdf-not-found {
+  color: red;
+  margin-left: 10px;
+  font-size: 0.8rem;
+}
+
+
 .topic-tag {
   background-color: var(--search-topic-background);
   border-radius: 15px; /* Rounded corners for bubble effect */

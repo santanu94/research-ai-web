@@ -62,7 +62,12 @@ const SearchResults = ({
                   )
                 }
               >
-                <div className="result-title">{result.title}</div>
+                <div className="result-title">
+                  {result.title}
+                  {result.url === "" && (
+                    <span className="pdf-not-found">[ PDF not found ]</span>
+                  )}
+                </div>
                 <div className="result-author">{result.authors}</div>
                 {result.published && (
                   <div className="result-author">
