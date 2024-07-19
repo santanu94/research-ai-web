@@ -21,7 +21,7 @@ const SearchBar = ({
 }) => {
   const [searchField, setSearchField] = useState("title");
   const quickSearchOptions = [
-    "Llama 3",
+    "LLM Agent",
     "RAG",
     "LLM Planning",
     "Depth Estimation",
