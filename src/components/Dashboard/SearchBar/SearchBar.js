@@ -167,23 +167,6 @@ const SearchBar = ({
           <input
             className="toggle-input"
             type="checkbox"
-            checked={searchMode === "original"}
-            onChange={toggleSearchMode}
-          />
-          <span className="slider round"></span>
-        </label>
-        <span className={`label ${searchMode === "original" ? "active" : ""}`}>
-          Original
-        </span>
-      </div> */}
-      <div className="toggle-switch">
-        <span className={`label ${searchMode === "latest" ? "active" : ""}`}>
-          Latest
-        </span>
-        <label className="switch">
-          <input
-            className="toggle-input"
-            type="checkbox"
             checked={searchMode === "scholar"}
             latest
             onChange={toggleSearchMode}
@@ -192,13 +175,6 @@ const SearchBar = ({
         </label>
         <span className={`label ${searchMode === "scholar" ? "active" : ""}`}>
           Scholar
-        </span>
-      </div>
-
-      {/* <div className="switch-labels">
-        <span className={searchMode === "latest" ? "active" : ""}>Latest</span>
-        <span className={searchMode === "original" ? "active" : ""}>
-          Original
         </span>
       </div> */}
     </div>
