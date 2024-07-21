@@ -88,11 +88,13 @@ const SearchResults = ({
               </div>
             ))}
           </div>
-        ) : searchFailed || (results.length === 0 && !isFetchingPapers) ? (
+        ) : !searchFailed && results.length === 0 && !isFetchingPapers ? (
           <div className="d-flex align-items-center justify-content-center flex-column vh-50">
-            <div className="error-text">
-              No results found or an unexpected error occurred.
-            </div>
+            <div className="error-text">No results found</div>
+          </div>
+        ) : searchFailed ? (
+          <div className="d-flex align-items-center justify-content-center flex-column vh-50">
+            <div className="error-text">Unexpected error occurred</div>
           </div>
         ) : null}
         {/* Pagination Control */}

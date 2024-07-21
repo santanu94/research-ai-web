@@ -74,6 +74,8 @@ const SearchBar = ({
           if (!response.ok) {
             // Handle response error
             console.error("search failed");
+            setSearchResults([]);
+            setSearchFailed(true);
           }
           return response.json();
         })
@@ -83,6 +85,7 @@ const SearchBar = ({
             search_results = data["result"];
             setSearchId(searchId);
             setSearchResults(search_results);
+            setSearchFailed(false);
             setCurrentPage(1);
           }
         })
