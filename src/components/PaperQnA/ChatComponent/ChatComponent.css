@@ -229,6 +229,18 @@
     background-color: var(--primary-color);
 }
 
+h3 {
+    font-weight: 900;
+}
+
+h4 {
+    font-weight: 600;
+}
+
+h5 {
+    font-weight: 300;
+}
+
 table {
     margin-bottom: 15px;
 }
@@ -237,6 +249,6 @@ th {
     min-width: 75px;
 }
 
-td {
+th, td {
     border: 1.2px solid var(--primary-font-color);
 }
