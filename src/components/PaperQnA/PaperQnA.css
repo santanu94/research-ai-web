@@ -20,14 +20,23 @@
 }
 
 .pdf-view {
-    flex: 0 0 48%; /* 65% of the container */
-    /* Additional styling for PDF viewer */
+    flex-grow: 1;
 }
 
 .chatroom {
-    flex-grow: 1;
+    flex: 0 0 52%;
+    min-width: 0;
     max-height: calc(100vh - 51px);
     /* flex: 0 0 45%; 35% of the container */
     /* Additional styling for chat section */
     /* height: 100vh; */
+}
+
+@media (max-width: 992px) {
+    .pdf-view {
+        display: none;
+    }
+    .chatroom {
+        flex-grow: 1;
+    }
 }
