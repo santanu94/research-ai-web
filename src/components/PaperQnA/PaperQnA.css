@@ -20,7 +20,7 @@
 }
 
 .pdf-view {
-    flex: 0 0 55%; /* 65% of the container */
+    flex: 0 0 48%; /* 65% of the container */
     /* Additional styling for PDF viewer */
 }
 

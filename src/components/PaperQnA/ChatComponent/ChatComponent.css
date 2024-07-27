@@ -64,6 +64,10 @@
     align-self: flex-end;
 }
 
+.summary-message {
+    color: var(--primary-font-color);
+}
+
 .user-message {
     background-color: #867ed2;
     color: var(--white)
@@ -197,7 +201,7 @@
     flex: 0 0 auto;
     height: 120px;
     width: auto;
-    max-width: 180px;
+    max-width: 230px;
     background-color: #f8f9fa;
     border: 1px solid #C0C0C0;
     color: #495057;
@@ -223,4 +227,16 @@
 
 .progress-bar {
     background-color: var(--primary-color);
+}
+
+table {
+    margin-bottom: 15px;
+}
+
+th {
+    min-width: 75px;
+}
+
+td {
+    border: 1.2px solid var(--primary-font-color);
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
+import remarkGfm from "remark-gfm";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import "./ChatComponent.css";
@@ -111,6 +112,14 @@ const ChatComponent = ({
           if (response.status === 200) {
             const responseJson = await response.json();
             setSamplePaperQuestions(responseJson["paper_questions"]);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                type: "summary-message",
+                text: responseJson["summary"],
+                conversationId: null,
+              },
+            ]);
             setupSocketListeners();
             socket.connect();
             setIsPreprocessing(false);
@@ -370,11 +379,12 @@ const ChatComponent = ({
             >
               <div className={`message ${msg.type}`}>
                 <ReactMarkdown
-                  remarkPlugins={[remarkMath]}
+                  remarkPlugins={[remarkMath, remarkGfm]}
                   rehypePlugins={[rehypeKatex]}
                 >
                   {preprocessLaTeX(msg.text)}
                 </ReactMarkdown>
+                {console.log(msg.text)}
               </div>
               {msg.type === "assistant-message" && (
                 <div className="feedback-spacer">
