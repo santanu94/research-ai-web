@@ -60,7 +60,7 @@ const PDFViewer = ({ url, pageNumber, setPageNumber }) => {
         <div className="d-flex align-items-center">
           <button
             type="button"
-            className="btn btn-light margin-right"
+            className="btn btn-light margin-right control-button"
             aria-label="previous page"
             onClick={() => {
               setPageNumber(pageNumber - 1 > 1 ? pageNumber - 1 : 1);
@@ -86,7 +86,7 @@ const PDFViewer = ({ url, pageNumber, setPageNumber }) => {
           <span>{numPages ?? "X"}</span>
           <button
             type="button"
-            className="btn btn-light margin-left-5"
+            className="btn btn-light margin-left-5 control-button"
             aria-label="next page"
             onClick={() => {
               setPageNumber(

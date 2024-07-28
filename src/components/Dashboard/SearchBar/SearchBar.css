@@ -12,7 +12,7 @@
 
 .search-bar-container {
     display: flex;
-    font-size: 20px;
+    font-size: 17px;
 }
 
 .search-field-selector {
@@ -25,7 +25,7 @@
 
 .search-bar {
     width: 75%;
-    height: 56px;
+    height: 50px;
     padding: 0px 15px;
     border: 0;
     box-sizing: border-box;
@@ -58,7 +58,8 @@
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
-}
+    font-size: 0.8rem;
+  }
   
 .quick-search-bubble {
     background-color: #f0f0f0;

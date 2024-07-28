@@ -1,5 +1,23 @@
+/* @font-face {
+  font-family: 'Figtree';
+  src: url('./assets/fonts/Figtree/static/Figtree-Black.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-BlackItalic.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-Bold.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-BoldItalic.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-ExtraBold.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-ExtraBoldItalic.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-Italic.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-Light.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-LightItalic.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-Medium.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-MediumItalic.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-Regular.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-SemiBold.ttf') format('truetype'),
+  url('./assets/fonts/Figtree/static/Figtree-SemiBoldItalic.ttf') format('truetype');
+} */
+
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Figtree', 'Roboto', sans-serif;
   background-color: var(--primary-background);
   color: var(--primary-font-color);
 }

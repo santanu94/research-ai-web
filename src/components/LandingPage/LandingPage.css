@@ -22,22 +22,23 @@
 .release {
     border-radius: 25px;
     width: fit-content;
-    margin: auto;
     padding: 7px 15px;
     box-shadow: 0 0px 100px 10px var(--light-grey);
     background-color: var(--white);
     margin-top: 18%;
+    margin: 15% auto 5px;
 }
 
 .landing-page .headline {
-    width: 80%;
-    float: right;
     text-align: left;
-}
+    width: 80%;
+    margin: auto;
+    font-size: 15px;
+  }
   
 .landing-page .headline-text {
-    font-size: 3.5rem;
-    font-weight: 500;
+    font-size: 2.9rem;
+    font-weight: 400;
     margin-top: 25px;
     margin-bottom: 70px;
     text-align: left;
@@ -56,18 +57,18 @@
 .landing-page .call-to-action-buttons-div {
     padding-left: 5%;
     padding-right: 5%;
-    margin-top: 50px;
+    margin-top: 40px;
 }
   
 .landing-page .btn-primary {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: var(--white);
-    padding: 10px 20px;
-    font-size: 18px;
+    font-size: 16px;
     margin-left: 10px;
     margin-right: 10px;
-    width: 150px;
+    padding: 8px 8px;
+    width: 140px;
 }
 
 .landing-page .btn-explore {
@@ -83,7 +84,8 @@
 
 .landing-page .image-preview-section {
     /* display: inline-block; */
-    width: 55%;
+    width: 65%;
+    margin: 70px 0;
 }
 
 .landing-page .image-preview-section img {
@@ -102,11 +104,11 @@
 }
 
 .feature-heading {
-    font-size: 2.5rem;
+    font-size: 2.1rem;
 }
 
 .feature-description {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     margin: 2% auto 1.2%;
     display: block;
     max-width: 60%;
@@ -130,6 +132,8 @@
     flex-grow: 1;
     height: 1px;
     max-width: 20%;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .footer .icons {
@@ -154,6 +158,12 @@
 
 .mr-auto {
     margin-right: auto;
+}
+
+.footer-link {
+    font-size: 0.7rem;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 @media (max-width: 768px) {

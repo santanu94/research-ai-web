@@ -42,10 +42,12 @@
 } */
 
 .form-control {
-    width: 60px;
     display: initial;
     border-width: 2px !important;
     margin: 0 2px;
+    font-size: 0.9rem;
+    line-height: 0.3;
+    width: 52px;
 }
 
 /* .dropdown {
@@ -66,6 +68,7 @@
 } */
 
 .control-button {
+    font-size: 1.2rem;
     background-color: var(--white) !important;
     border: none;
 }

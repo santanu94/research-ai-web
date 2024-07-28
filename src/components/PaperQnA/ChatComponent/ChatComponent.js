@@ -465,7 +465,7 @@ const ChatComponent = ({
             ))}
           </div>
         </div>
-        <div className="input-group py-3 message-input-container">
+        <div className="input-group py-2 message-input-container">
           <div class="form-floating">
             <textarea
               rows={1}

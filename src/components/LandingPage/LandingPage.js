@@ -147,14 +147,14 @@ const LandingPage = () => {
           </div>
           <div className="d-flex flex-row justify-content-center tnc-section">
             <Link
-              className="mx-3 text-decoration-none text-dark"
+              className="mx-3 text-decoration-none text-dark footer-link"
               to="/terms-of-usage"
             >
               Terms of Usage
             </Link>{" "}
             |{" "}
             <Link
-              className="mx-3 text-decoration-none text-dark"
+              className="mx-3 text-decoration-none text-dark footer-link"
               to="/privacy-policy"
             >
               Privacy Policy

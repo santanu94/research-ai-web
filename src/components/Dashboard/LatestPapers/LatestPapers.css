@@ -4,7 +4,7 @@
 }
 
 .headline {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: bold;
     margin-left: 2rem;
 }
@@ -12,11 +12,12 @@
 .latest-papers {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    padding: 1rem 0;
+    gap: 0.35rem 0.5rem;
+    padding: 0.5rem 0;
 }
   
 .paper {
+    font-size: 0.95rem;
     flex: 1 1 48%; /* Ensures that each card takes about half the width minus gap */
     border: 1px solid #ccc;
     border-radius: 5px;
