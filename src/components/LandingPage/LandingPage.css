@@ -67,19 +67,19 @@
     font-size: 16px;
     margin-left: 10px;
     margin-right: 10px;
-    padding: 8px 8px;
-    width: 140px;
+    padding: 10px 8px;
+    width: 135px;
 }
 
 .landing-page .btn-explore {
     /* background-color:  */
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
-    padding: 10px 20px;
-    font-size: 18px;
+    padding: 10px 8px;
+    font-size: 16px;
     margin-left: 10px;
     margin-right: 10px;
-    width: 150px;
+    width: 135px;
 }
 
 .landing-page .image-preview-section {
