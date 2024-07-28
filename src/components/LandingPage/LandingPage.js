@@ -93,7 +93,7 @@ const LandingPage = () => {
               easily graspable insights.
             </p> */}
           </div>
-          <div className="image-preview-section align-self-center">
+          <div className="image-preview-section">
             <img src={SearchPreviewImage} alt="The Research AI preview" />
           </div>
         </div>

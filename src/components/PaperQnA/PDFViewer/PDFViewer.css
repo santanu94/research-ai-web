@@ -3,10 +3,11 @@
 } */
 .controls {
     background-color: var(--white);
-    padding: 10px 20px;
+    padding: 5px 20px;
     margin-bottom: 5px;
     border-radius: 8px 8px 0 0;
     display: flex;
+    font-size: 0.9rem;
 }
 
 /* .controls button {
@@ -45,9 +46,9 @@
     display: initial;
     border-width: 2px !important;
     margin: 0 2px;
-    font-size: 0.9rem;
     line-height: 0.3;
     width: 52px;
+    padding: .275rem .75rem;
 }
 
 /* .dropdown {
@@ -77,8 +78,8 @@
     background-color: var(--white) !important;
     color: #000;
     border: none;
-    width: 25px;
-    height: 25px;
+    height: 20px;
+    width: 20px;
 }
 
 /* .zoom-btn:hover {
