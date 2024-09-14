@@ -12,7 +12,13 @@ import PaperQnA from "./components/PaperQnA/PaperQnA";
 import TermsOfUsage from "./components/TermsOfUsage/TermsOfUsage";
 import PrivacyPolicy from "./components/PrivacyPolicy/PrivacyPolicy";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
-import { auth_db, auth_token } from "./utils/authenticate";
+import {
+  auth_db,
+  auth_token,
+  getAuthToken,
+  setUserName,
+  clearCache,
+} from "./utils/authenticate";
 // import { is_token_generated, is_token_valid } from "./utils/authenticate";
 import posthog from "posthog-js";
 
@@ -36,92 +42,34 @@ const styles = {
 
 const PrivateRoute = ({ children }) => {
   const { user, isLoading } = useKindeAuth();
-  const token = localStorage.getItem("userToken");
-  // let token = localStorage.getItem("userToken");
-  // const cachedUserData = JSON.parse(localStorage.getItem("userData"));
-  const [userAuthenticated, setUserAuthenticated] = useState(null);
-  let location = useLocation();
-
-  // const cache_user = async () => {
-  //   token = await is_token_generated(user);
-  //   if (token) {
-  //     localStorage.setItem("userToken", token);
-  //     localStorage.setItem("userData", user);
-  //     setUserAuthenticated(true);
-  //   } else {
-  //     localStorage.removeItem("userToken");
-  //     localStorage.removeItem("userData");
-  //     setUserAuthenticated(false);
-  //   }
-  // };
-
-  // const clear_cache = async () => {
-  //   localStorage.removeItem("userToken");
-  //   localStorage.removeItem("userData");
-  //   setUserAuthenticated(false);
-  // };
-
-  // useEffect(() => {
-  //   const verifyUser = async () => {
-  //     if (!isLoading) {
-  //       console.log(isLoading);
-  //       console.log(cachedUserData);
-  //       if (user) {
-  //         console.log(user, "-----------");
-  //         console.log("1");
-  //         await cache_user();
-  //       } else if (token && cachedUserData && is_token_valid(token)) {
-  //         console.log("2");
-  //         setUserAuthenticated(true);
-  //       } else {
-  //         console.log("3");
-  //         await clear_cache();
-  //       }
-  //     }
-  //   };
-  //   verifyUser();
-  // }, [isLoading]);
+  const [userIsAuthenticated, setUserIsAuthenticated] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
-    const verifyUser = async () => {
-      if (!isLoading) {
-        if (!user) {
-          console.log("1");
-          setUserAuthenticated(false);
-          return;
-        }
-        if (!token) {
-          console.log("2");
-          const authSuccess = await auth_db(user);
-          if (authSuccess) {
-            console.log("3");
-            // Reload the token from localStorage after it's potentially updated by auth_db
-            const updatedToken = localStorage.getItem("userToken");
-            if (updatedToken && auth_token(updatedToken)) {
-              console.log("4");
-              setUserAuthenticated(true);
-              return;
-            }
-          }
-          console.log("5");
-          setUserAuthenticated(false);
-          return;
-        }
+    const verifyAuthentication = async () => {
+      if (isLoading) return;
 
-        if (auth_token(token)) {
-          console.log("6");
-          setUserAuthenticated(true);
-        } else {
-          console.log("7");
-          localStorage.removeItem("userToken");
-          setUserAuthenticated(false);
+      const token = getAuthToken();
+      if (user) {
+        const authSuccess = await auth_db(user);
+        if (authSuccess) {
+          setUserName(user.given_name);
+          setUserIsAuthenticated(true);
+          return;
         }
+      } else if (token && auth_token(token)) {
+        setUserIsAuthenticated(true);
+        return;
       }
-    };
-    verifyUser();
-  }, [token, user, isLoading]);
 
-  if (userAuthenticated === null || isLoading) {
+      clearCache();
+      setUserIsAuthenticated(false);
+    };
+
+    verifyAuthentication();
+  }, [user, isLoading]);
+
+  if (userIsAuthenticated === null || isLoading) {
     return (
       <div
         className="d-flex align-items-center flex-column vh-100"
@@ -143,10 +91,14 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  return userAuthenticated ? children : <Navigate to="/" />;
+  return userIsAuthenticated ? (
+    children
+  ) : (
+    <Navigate to="/" state={{ from: location }} replace />
+  );
 };
 
-const RoutesComponent = () => {
+const AppRoutes = () => {
   return (
     <Router>
       <Routes>
@@ -169,9 +121,10 @@ const RoutesComponent = () => {
         />
         <Route path="/terms-of-usage" element={<TermsOfUsage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
 };
 
-export default RoutesComponent;
+export default AppRoutes;

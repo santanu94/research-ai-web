@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useRef, useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./LandingPage.css";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import posthog from "posthog-js";
 import { FaXTwitter, FaLinkedinIn } from "react-icons/fa6";
 import mixpanel from "mixpanel-browser";
+import { getAuthToken, getUserName } from "../../utils/authenticate";
 import Navbar from "../Navbar/Navbar";
 import MobileWarningModal from "./MobileWarningModal/MobileWarningModal";
 import heroImage from "../../assets/images/landing-page-preview.png";
@@ -19,6 +20,8 @@ const LandingPage = () => {
   ] = useState(false);
   const { register } = useKindeAuth();
   const ref = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
   mixpanel.track_pageview({ page: "Landing Page" });
 
   React.useEffect(() => {
@@ -31,6 +34,13 @@ const LandingPage = () => {
 
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
+
+  useEffect(() => {
+    if (getAuthToken() && getUserName()) {
+      const from = location.state?.from?.pathname || "/dashboard";
+      navigate(from, { replace: true });
+    }
+  }, [navigate, location]);
 
   const handleExploreButtonClick = () => {
     mixpanel.track("Clicked Explore Button");

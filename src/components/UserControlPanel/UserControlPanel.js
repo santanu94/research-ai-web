@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom";
 import { FaUser } from "react-icons/fa6";
 import { FaUserCircle, FaCog } from "react-icons/fa";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
+import { clearCache } from "../../utils/authenticate";
 import mixpanel from "mixpanel-browser";
 
 const UserControlPanel = () => {
@@ -13,6 +14,7 @@ const UserControlPanel = () => {
   const handleLogout = () => {
     mixpanel.track("Clicked Logout Button");
     logout();
+    clearCache();
     mixpanel.reset();
   };
 

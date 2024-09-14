@@ -11,7 +11,8 @@ import posthog from "posthog-js";
 import mixpanel from "mixpanel-browser";
 
 const Dashboard = () => {
-  const { user, isLoading } = useKindeAuth();
+  const { isLoading } = useKindeAuth();
+  const [userName, setUserName] = useState(localStorage.getItem("userName"));
   const {
     searchResults,
     setSearchResults,
@@ -27,9 +28,15 @@ const Dashboard = () => {
   const [searchFailed, setSearchFailed] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  posthog.identify(user.given_name);
-  mixpanel.identify();
-  mixpanel.track_pageview({ page: "Dashboard Page" });
+  useEffect(() => {
+    const cachedName = localStorage.getItem("userName");
+    if (cachedName) {
+      setUserName(cachedName);
+      posthog.identify(cachedName);
+      mixpanel.identify(cachedName);
+      mixpanel.track_pageview({ page: "Dashboard Page" });
+    }
+  }, []);
 
   useEffect(() => {
     if (searchResults && searchResults.length > 0) {
@@ -68,7 +75,7 @@ const Dashboard = () => {
     mixpanel.track("Closed Search Results", { search_id: searchId });
   };
 
-  if (isLoading) {
+  if (isLoading && !userName) {
     return (
       <div className="d-flex align-items-center flex-column vh-100 loading-screen">
         <div
@@ -93,7 +100,7 @@ const Dashboard = () => {
         {/* <div className="dashboard-main-container"> */}
         <div className="left-section d-flex flex-column flex-grow-1">
           <span className="greeter">
-            {greeting}, {user.given_name}
+            {greeting}, {userName || "User"}
           </span>
           <SearchBar
             setSearchResults={setSearchResults}

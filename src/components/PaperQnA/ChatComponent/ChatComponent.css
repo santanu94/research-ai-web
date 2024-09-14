@@ -112,6 +112,19 @@
     padding-top: 15px;
 }
 
+table img {
+    max-width: 75%;
+    max-height: 375px;
+}
+
+table:has(img) {
+    width: 100%;
+}
+
+table:has(img) th,
+table:has(img) td {
+    border: none;
+}
 /* .typing-indicator {
     display: inline-block;
     width: 10px;
