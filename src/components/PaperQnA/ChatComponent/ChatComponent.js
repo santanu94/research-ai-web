@@ -15,12 +15,12 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import posthog from "posthog-js";
 import mixpanel from "mixpanel-browser";
 
-const socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
-  path: process.env.REACT_APP_CHAT_PATH,
-  autoConnect: false,
-  reconnectionDelay: 3000,
-  reconnectionAttempts: 5,
-});
+// const chat_socket = io(process.env.REACT_APP_CHAT_DOMAIN, {
+//   path: process.env.REACT_APP_CHAT_PATH,
+//   autoConnect: false,
+//   reconnectionDelay: 3000,
+//   reconnectionAttempts: 5,
+// });
 
 const ChatComponent = ({
   paperId,
@@ -38,63 +38,158 @@ const ChatComponent = ({
   const [preprocessingTotal, setPreprocessingTotal] = useState(100);
   const [samplePaperQuestions, setSamplePaperQuestions] = useState([]);
   const [processCompleted, setProcessCompleted] = useState(false);
-  const [socketioIsConnected, setSocketioIsConnected] = useState(
-    socket.connected
-  );
+  const [socketioIsConnected, setSocketioIsConnected] = useState(false);
   const [socketioReconnecting, setSocketioReconnecting] = useState(true);
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
-  let inactivityTimer;
+  const [chatFailed, setChatFailed] = useState(false);
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to perprocessing socket instance");
-      socket.emit("preprocess", {
-        paper_id: paperId,
-        paper_title: paperTitle,
-        paper_published_date: paperPublishedDate,
-        paper_url: paperUrl,
-      });
-      setIsPreprocessing(true);
-    });
+    let intervalId;
 
-    socket.on("preprocessStatus", (data) => {
-      console.log("Preprocess Status:", data);
-      if (data.status === "complete") {
-        console.log("Preprocess completed successfully");
-        setProcessCompleted(true);
-        // socket.off("preprocessStatus");
-        socket.off("connect");
-        socket.off("disconnect");
-        socket.off("preprocessStatus");
-        socket.disconnect();
-        // socket.off("preprocessStatus");
-        // setIsPreprocessing(false);
-        setPreprocessingProgress(data.progress);
-        setPreprocessingTotal(data.total);
-      } else if (data.status === "error") {
-        setIsPreprocessing(false);
+    const startPreprocessing = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_CHAT_DOMAIN}/api/v1/paper/preprocess`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              paper_id: paperId,
+              paper_title: paperTitle,
+              paper_published_date: paperPublishedDate,
+              paper_url: paperUrl,
+            }),
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setIsPreprocessing(true);
+          pollPreprocessingStatus(data.task_id);
+        } else {
+          throw new Error(data.message || "Start preprocessing failed"); // TODO
+        }
+      } catch (error) {
+        console.error("Error starting preprocessing:", error);
         setPreprocessingError(true);
-      } else if (data.progress) {
-        setPreprocessingProgress(data.progress);
-        setPreprocessingTotal(data.total);
       }
-    });
+    };
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected from perprocessing socket instance");
-      setIsPreprocessing(false);
-      socket.disconnect();
-    });
+    const pollPreprocessingStatus = async (taskId) => {
+      let failCount = 0; // Initialize a counter for failed attempts
 
-    socket.connect();
+      intervalId = setInterval(async () => {
+        try {
+          const response = await fetch(
+            `${process.env.REACT_APP_CHAT_DOMAIN}/api/v1/paper/preprocess/status/${taskId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          const data = await response.json();
+          if (response.ok) {
+            if (data.status === "complete") {
+              console.log("Preprocess completed successfully");
+              setProcessCompleted(true);
+              setPreprocessingProgress(data.progress);
+              setPreprocessingTotal(data.total);
+              clearInterval(intervalId);
+            } else if (data.status === "error") {
+              throw new Error("Preprocessing failed");
+            } else {
+              setPreprocessingProgress(data.progress);
+              setPreprocessingTotal(data.total);
+            }
+          } else {
+            failCount++;
+            if (failCount >= 5) {
+              throw new Error("Failed to fetch status 5 times");
+            }
+          }
+        } catch (error) {
+          console.error("Error polling preprocessing status:", error);
+          clearInterval(intervalId);
+          setIsPreprocessing(false);
+          setPreprocessingError(true);
+        }
+      }, 2500); // Poll every 5 seconds
+    };
+
+    startPreprocessing();
 
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("preprocessStatus");
-      socket.disconnect();
+      clearInterval(intervalId);
     };
-  }, [paperId]);
+  }, [paperId, paperTitle, paperPublishedDate, paperUrl]);
+
+  // useEffect(() => {
+  //   const preprocess_socket = new WebSocket(
+  //     `${process.env.REACT_APP_CHAT_DOMAIN_WS}/ws/v1/paper/preprocess`
+  //   );
+
+  //   preprocess_socket.onopen = () => {
+  //     console.log("Connected to perprocessing socket instance");
+  //     preprocess_socket.send(
+  //       JSON.stringify({
+  //         paper_id: paperId,
+  //         paper_title: paperTitle,
+  //         paper_published_date: paperPublishedDate,
+  //         paper_url: paperUrl,
+  //       })
+  //     );
+  //     setIsPreprocessing(true);
+  //   };
+
+  //   preprocess_socket.onmessage = (event) => {
+  //     const data = JSON.parse(event.data);
+  //     console.log("Preprocess Status:", data);
+  //     if (data.status === "complete") {
+  //       console.log("Preprocess completed successfully");
+  //       setProcessCompleted(true);
+  //       // socket.off("preprocessStatus");
+  //       // preprocess_socket.off("connect");
+  //       // preprocess_socket.off("disconnect");
+  //       // preprocess_socket.off("preprocessStatus");
+  //       // preprocess_socket.disconnect();
+  //       // socket.off("preprocessStatus");
+  //       // setIsPreprocessing(false);
+  //       setPreprocessingProgress(data.progress);
+  //       setPreprocessingTotal(data.total);
+  //       preprocess_socket.close();
+  //     } else if (data.status === "error") {
+  //       setIsPreprocessing(false);
+  //       setPreprocessingError(true);
+  //       preprocess_socket.close();
+  //     } else if (data.progress) {
+  //       setPreprocessingProgress(data.progress);
+  //       setPreprocessingTotal(data.total);
+  //     }
+  //   };
+
+  //   preprocess_socket.onclose = (event) => {
+  //     console.log("Disconnected from perprocessing socket instance");
+  //     console.log(event.code);
+  //     setIsPreprocessing(false);
+  //     // preprocess_socket.disconnect();
+  //   };
+
+  //   preprocess_socket.onerror = (error) => {
+  //     console.error("WebSocket error:", error);
+  //     preprocess_socket.close();
+  //   };
+
+  //   return () => {
+  //     // preprocess_socket.off("connect");
+  //     // preprocess_socket.off("disconnect");
+  //     // preprocess_socket.off("preprocessStatus");
+  //     // preprocess_socket.disconnect();
+  //     preprocess_socket.close();
+  //   };
+  // }, [paperId]);
 
   useEffect(() => {
     if (processCompleted) {
@@ -120,8 +215,8 @@ const ChatComponent = ({
                 conversationId: null,
               },
             ]);
-            setupSocketListeners();
-            socket.connect();
+            // setupSocketListeners();
+            // socket.connect();
             setIsPreprocessing(false);
           } else {
             setIsPreprocessing(false);
@@ -135,63 +230,105 @@ const ChatComponent = ({
     }
   }, [processCompleted]);
 
-  const resetInactivityTimer = () => {
-    clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(() => {
-      socket.disconnect();
-      setSocketioIsConnected(false);
-    }, 1.8e6); // (900000) 15 minutes in milliseconds
-  };
+  // const handleReconnectChat = () => {
+  //   setupSocketListeners();
+  //   // setSocketioIsConnected(true);
+  //   // resetInactivityTimer(); // Reset inactivity timer on reconnect
+  // };
 
-  const handleReconnectChat = () => {
-    socket.connect();
-    // setSocketioIsConnected(true);
-    // resetInactivityTimer(); // Reset inactivity timer on reconnect
-  };
+  // const setupSocketListeners = () => {
+  //   const chat_socket = new WebSocket(
+  //     `${process.env.REACT_APP_CHAT_DOMAIN_WS}/ws/query`
+  //   );
+  //   setSocketioReconnecting(true);
 
-  const setupSocketListeners = () => {
-    socket.on("connect", () => {
-      console.log("Connected to WebSocket");
-      resetInactivityTimer(); // reset inactivity timer after socketio connection
-      setSocketioIsConnected(true);
-      setSocketioReconnecting(false);
-    });
+  //   chat_socket.onopen = () => {
+  //     console.log("Connected to WebSocket");
+  //     resetInactivityTimer(); // reset inactivity timer after socketio connection
+  //     setSocketioIsConnected(true);
+  //     setSocketioReconnecting(false);
+  //   };
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected from WebSocket");
-      setSocketioIsConnected(false);
-      setSocketioReconnecting(false);
-    });
+  //   chat_socket.onclose = (event) => {
+  //     console.log("Chat socket closed");
+  //     setSocketioIsConnected(false);
+  //     setSocketioReconnecting(false);
+  //   };
+  //   // socket.on("disconnect", () => {
+  //   //   console.log("Disconnected from WebSocket");
+  //   //   setSocketioIsConnected(false);
+  //   //   setSocketioReconnecting(false);
+  //   // });
 
-    socket.io.on("reconnect_attempt", () => {
-      console.log("reconnecting");
-      setSocketioReconnecting(true);
-    });
+  //   // socket.io.on("reconnect_attempt", () => {
+  //   //   console.log("reconnecting");
+  //   //   setSocketioReconnecting(true);
+  //   // });
 
-    socket.io.on("reconnect_failed", () => {
-      console.log("reconnect failed");
-      setSocketioReconnecting(false);
-    });
+  //   // socket.io.on("reconnect_failed", () => {
+  //   //   console.log("reconnect failed");
+  //   //   setSocketioReconnecting(false);
+  //   // });
 
-    socket.on("receiveQueryResponse", (incomingMessage) => {
-      console.log(typeof incomingMessage);
-      if (incomingMessage.status === 200) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            type: "assistant-message",
-            text: incomingMessage.response,
-            conversationId: incomingMessage.conversation_id,
-          },
-        ]);
-        setIsAssistantTyping(false);
-      } else {
-        // Display a toast with the error message
-        // npm install react-toastify
-        // toast.error(incomingMessage.error);
+  //   chat_socket.onmessage = (event) => {
+  //     const incomingMessage = JSON.parse(event.data);
+  //     console.log(typeof incomingMessage);
+  //     if (incomingMessage.status === 200) {
+
+  //     } else {
+  //       // Display a toast with the error message
+  //       // npm install react-toastify
+  //       // toast.error(incomingMessage.error);
+  //     }
+  //   };
+  // };
+
+  const fetchQueryResponse = (message, conversationId, searchId) => {
+    fetch(
+      `${process.env.REACT_APP_CHAT_DOMAIN}${process.env.REACT_APP_PAPER_QUERY_ENDPOINT}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: message,
+          current_page_number: pageNumber,
+          paper_id: paperId,
+          conversation_id: conversationId,
+          search_id: searchId,
+        }),
       }
-    });
+    )
+      .then(async (response) => {
+        if (response.status === 200) {
+          const responseJson = await response.json();
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              type: "assistant-message",
+              text: responseJson.response,
+              conversationId: responseJson.conversation_id,
+            },
+          ]);
+          setIsAssistantTyping(false);
+          setChatFailed(true);
+        } else {
+          setChatFailed(true);
+        }
+      })
+      .catch(() => {
+        setChatFailed(true);
+      });
   };
+
+  // const resetInactivityTimer = () => {
+  //   clearTimeout(inactivityTimer);
+  //   inactivityTimer = setTimeout(() => {
+  //     chat_socket.close();
+  //     setSocketioIsConnected(false);
+  //   }, 1.8e6); // (900000) 15 minutes in milliseconds
+  // };
 
   if (isPreprocessing) {
     return (
@@ -249,13 +386,8 @@ const ChatComponent = ({
       });
 
       // send message to server
-      socket.emit("sendQuery", {
-        message: message.trim(),
-        current_page_number: pageNumber,
-        paper_id: paperId,
-        conversation_id: conversationId,
-        search_id: searchId,
-      });
+      fetchQueryResponse(message, conversationId, searchId);
+
       // Assume the message is sent successfully and add it to messages
       setMessages([
         ...messages,
@@ -275,7 +407,7 @@ const ChatComponent = ({
       event.preventDefault();
       handleSendMessage();
     }
-    resetInactivityTimer();
+    // resetInactivityTimer();
   };
 
   const handleInput = (e) => {
@@ -384,6 +516,7 @@ const ChatComponent = ({
                 >
                   {preprocessLaTeX(msg.text)}
                 </ReactMarkdown>
+
                 {console.log(msg.text)}
               </div>
               {msg.type === "assistant-message" && (
@@ -473,7 +606,7 @@ const ChatComponent = ({
               id="message-input"
               placeholder="Leave a comment here"
               value={newMessage}
-              disabled={isAssistantTyping || !socketioIsConnected}
+              disabled={isAssistantTyping || isPreprocessing}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               onInput={handleInput}
@@ -487,7 +620,7 @@ const ChatComponent = ({
         >
           <IoSend />
         </button> */}
-          {!socketioIsConnected ? (
+          {/* {!socketioIsConnected ? (
             <>
               {socketioReconnecting ? (
                 <button className="btn d-flex align-self-center pe-none">
@@ -512,7 +645,13 @@ const ChatComponent = ({
             >
               <IoSend />
             </button>
-          )}
+          )} */}
+          <button
+            className="btn d-flex align-self-center"
+            onClick={handleSendMessage}
+          >
+            <IoSend />
+          </button>
         </div>
       </div>
     </div>
