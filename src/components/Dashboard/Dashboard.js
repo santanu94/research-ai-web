@@ -48,7 +48,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     console.log(searchFailed);
-    if (searchFailed && searchResults.length == 0) setShowSearchResults(true);
+    if (searchFailed && searchResults.length === 0) setShowSearchResults(true);
     // if (setSearchFailed !== null) {
     //   setShowSearchResults(true);
     // }
