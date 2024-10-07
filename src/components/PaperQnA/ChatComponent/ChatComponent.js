@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import remarkGfm from "remark-gfm";
@@ -43,10 +43,16 @@ const ChatComponent = ({
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
   const [chatFailed, setChatFailed] = useState(false);
 
+  // Track whether preprocessing has already started to avoid duplicate calls
+  const hasPreprocessed = useRef(false);
+
   useEffect(() => {
     let intervalId;
 
     const startPreprocessing = async () => {
+      if (hasPreprocessed.current) return; // Prevent duplicate preprocessing
+      hasPreprocessed.current = true;
+
       try {
         const response = await fetch(
           `${process.env.REACT_APP_CHAT_DOMAIN}/api/v1/paper/preprocess`,
